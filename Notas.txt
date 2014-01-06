@@ -1,0 +1,52 @@
+Notas-Útiles
+============
+Este archivo va a contener varias notas sobre comandos útiles que no uso muy 
+frecuentemente. 
+
+fmt
+============
+Normalmente un editor de texto tiene que dar la opción de formatear las líneas 
+que estamos usando  en el archivo de texto. En kate/kdevelop (que es lo que 
+estoy usando ahora), está la opción en Herramientas->Ajuste de línea. Por 
+defecto esto ajusta a 75 caracteres cada línea y mueve solo las palabras, esto 
+es útil para dejar mas projilo y estándar la salida de la documentación en un 
+archivo de texto como este. En linux el comando fmt se encarga de hacer esto, 
+ver man fmt para ver las opciones. 
+
+tr
+============
+Sirve para traducir caracteres, pasas un grupo de caracteres a otro, ejemplo: 
+tr BCJ bc < lista.txt
+
+sort
+============
+No suelo hacer uso de este comando, pero sirve para orden por columna con 
+opción -k num, entre otras opciones. Lo anoto para tenerlo en cuenta. 
+
+uniq
+============
+Sirve para borrar duplicados. 
+
+split/join/paste
+============
+Son útiles para dividir y combinar archivos con listas. También join puede ser 
+algo básico para comparar diferentes líneas usándolo con sort.
+
+expand/unexpand
+============
+expand convirte tabs en espacio, unexpand hace lo contrario...
+
+pr/lpr
+============
+pr sirve para formatear una salida y dejarla lista para imprimir con lpr
+
+cut
+============
+Sirve para cortar ciertas porciones del texto. 
+
+xclip
+============
+Sería útil para tomar un texto de un archivo y pasarlo al clipboard del 
+escritorio. 
+
+
