@@ -78,6 +78,7 @@ fi
 
 if [ "$opcupgrade" = "y" ] ; then
     actualizar
+    salida
 fi
 
 instalarrequerimientos(){
