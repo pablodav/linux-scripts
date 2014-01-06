@@ -144,7 +144,7 @@ usararchivoaptoffline(){
 
 salida(){
     echo -e "\n Gracias por Utilizar el script de instalación de aplicaciones útiles para Linux Kubuntu, inicie el script escribiendo $0 $opcaptofflinegen 
-    \n Por errores o sugerencias pablodav@gmail.com."
+    \n Por errores o sugerencias pablodav@gmail.com. \n" | fmt
     echo "Instalación finalizada. Pulse Enter para terminar"
     read TheEnd
 }
