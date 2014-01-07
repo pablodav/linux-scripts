@@ -23,8 +23,80 @@ aptofflinefile="archivoaptofflinekubuntu1310.zip"
 opcaptofflinegen="aptofflinegen" #Variable para generar archivo aptoffline
 
 
+
+
+
+function instalarapps {
+    #Actualizo los datos de apt-get
+    echo "Actualizar información de apt-get con update"
+    sudo apt-get update
+    echo "apt-get -f install"
+    sudo apt-get -y -f install
+    echo "Instalando aplicaciones"$appsinstall""$appsmin""$appsdevel
+    sudo apt-fast install -y --force-yes $appsinstall $appsmin $appsdevel
+}
+
+
+function extras {
+    echo "Instalando extras"
+    sudo add-apt-repository ppa:scratch/ppa
+    sudo add-apt-repository ppa:stebbins/handbrake-releases
+    sudo add-apt-repository	ppa:maxim-s-barabash/sk1project
+    sudo add-apt-repository ppa:bjfs/ppa
+    sudo apt-fast update
+    sudo apt-fast install -y --force-yes python-sk1
+    sudo apt-fast install -y --force-yes handbrake-gtk
+    sudo apt-fast install -y --force-yes scratch 
+}
+#Fix drivers issues (ubuntu 12.04)
+#	sudo mkdir -p /etc/Wireless/RT2860STA/
+#	sudo touch /etc/Wireless/RT2860STA/RT2860STA.dat
+#	sudo service network-manager restart
+
+function aplicacionesremotas {
+    sudo add-apt-repository ppa:x2go/stable
+    sudo apt-fast update
+    sudo apt-fast install -y $appsremote
+}
+
+function actualizar {
+    echo "Actualizo todo el sistema"
+    sudo apt-fast update
+    sudo apt-fast -y upgrade
+}
+
+function aptofflinegenerador {
+    echo "inicializando generador apt-offline"
+    instalarrequerimientos
+    sudo apt-offline set apt.sig --update --upgrade --install-packages $appsinstall $appsdevel $appsmin
+    sudo apt-offline get apt.sig --threads 5 --bundle $aptofflinefile
+}
+
+function usararchivoaptoffline {
+    if [ $aptofflinefile ] ; then
+    sudo apt-offline install $aptoffline
+    fi
+}
+
+
+function salida {
+    echo -e "\n Gracias por Utilizar el script de instalación de aplicaciones útiles para Linux Kubuntu, inicie el script escribiendo $0 $opcaptofflinegen 
+    \n Por errores o sugerencias pablodav@gmail.com. \n" | fmt
+    echo "Instalación finalizada. Pulse Enter para terminar"
+    read TheEnd
+}
+ 
+function instalarrequerimientos {
+if [ ! -x /usr/sbin/apt-fast ] && [ ! -x /usr/bin/apt-offline ] ; then
+    sudo add-apt-repository ppa:apt-fast/stable
+    sudo apt-get update
+    sudo apt-get -y install apt-fast
+    sudo apt-fast -y install apt-offline
+fi
+}
+
 case "$1" in
-    '$opcaptofflinegen') 
+    $opcaptofflinegen) 
     aptofflinegenerador
     salida
     ;;
@@ -40,23 +112,23 @@ read opcautomatic
 
 
 if [ "$opcautomatic" = "y" ] ; then
-	echo "Se Instalaran los programas "$appsinstall""$appsmin" y todas las configuraciones automáticamente"
-	usararchivoaptoffline
-	instalarrequerimientos
-	aplicacionesremotas
-	extras
-	instalarapps
-	actualizar
-	salida
+    echo "Se Instalaran los programas "$appsinstall""$appsmin" y todas las configuraciones automáticamente"
+    usararchivoaptoffline
+    instalarrequerimientos
+    aplicacionesremotas
+    extras
+    instalarapps
+    actualizar
+    salida
 else
-	echo -e "¿Desea instalar las aplicaciones: \n $appsinstall $appsmin $appsdevel ? \n y/n:" | fmt
-	read opcappsinstall
-	echo "¿Desea agregar los repositorios de medibuntu? y/n:"
-	read opcaddextras
-	echo "¿Desea actualizar todo el sistema una vez finalizado? y/n:"
-	read opcupgrade
-	echo "¿Desea agregar apps remotas? y/n:"
-	read opcaddremote
+    echo -e "¿Desea instalar las aplicaciones: \n $appsinstall $appsmin $appsdevel ? \n y/n:" | fmt
+    read opcappsinstall
+    echo "¿Desea agregar los repositorios de medibuntu? y/n:"
+    read opcaddextras
+    echo "¿Desea actualizar todo el sistema una vez finalizado? y/n:"
+    read opcupgrade
+    echo "¿Desea agregar apps remotas? y/n:"
+    read opcaddremote
 fi
 
 if [ "$opcappsinstall" = "y" ] || [ "$opcaddextras" = "y" ] || [ "$opcupgrade" = "y" ] || [ "$opcaddremote" = "y" ] ; then
@@ -80,71 +152,3 @@ if [ "$opcupgrade" = "y" ] ; then
     actualizar
     salida
 fi
-
-instalarrequerimientos(){
-    if [ ! -x /usr/sbin/apt-fast ] && [ ! -x /usr/sbin/apt-offline] ; then
-        echo "Agregar repositorio de apt-fast necesario para trabajar rápido con los repositorios"
-        sudo add-apt-repository ppa:apt-fast/stable
-        sudo apt-get update
-        sudo apt-get -y install apt-fast
-        sudo apt-fast -y install apt-offline
-    fi
-}
-
-instalarapps(){
-    #Actualizo los datos de apt-get
-    echo "Actualizar información de apt-get con update"
-    sudo apt-get update
-    echo "apt-get -f install"
-    sudo apt-get -y -f install
-    echo "Instalando aplicaciones"$appsinstall""$appsmin""$appsdevel
-    sudo apt-fast install -y --force-yes $appsinstall $appsmin $appsdevel
-}
-
-
-extras(){
-	echo "Instalando extras"
-	sudo add-apt-repository ppa:scratch/ppa
-	sudo add-apt-repository ppa:stebbins/handbrake-releases
-	sudo add-apt-repository	ppa:maxim-s-barabash/sk1project
-	sudo add-apt-repository ppa:bjfs/ppa
-	sudo apt-fast update
-	sudo apt-fast install -y --force-yes python-sk1
-	sudo apt-fast install -y --force-yes handbrake-gtk
-	sudo apt-fast install -y --force-yes scratch 
-}
-#Fix drivers issues (ubuntu 12.04)
-#	sudo mkdir -p /etc/Wireless/RT2860STA/
-#	sudo touch /etc/Wireless/RT2860STA/RT2860STA.dat
-#	sudo service network-manager restart
-
-aplicacionesremotas(){
-	sudo add-apt-repository ppa:x2go/stable
-	sudo apt-fast update
-	sudo apt-fast install -y $appsremote
-}
-
-actualizar(){
-	echo "Actualizo todo el sistema"
-	sudo apt-fast update
-	sudo apt-fast -y upgrade
-}
-
-aptofflinegenerador(){
-    instalarrequerimientos
-    apt-offline set apt.sig --update --upgrade --install-packages $appsinstall $appsdevel $appsmin
-    apt-offline get apt.sig --threads 5 --bundle $aptofflinefile
-}
-
-usararchivoaptoffline(){
-    if [ $aptofflinefile ] ; then
-    sudo apt-offline install $aptoffline
-    fi
-}
-
-salida(){
-    echo -e "\n Gracias por Utilizar el script de instalación de aplicaciones útiles para Linux Kubuntu, inicie el script escribiendo $0 $opcaptofflinegen 
-    \n Por errores o sugerencias pablodav@gmail.com. \n" | fmt
-    echo "Instalación finalizada. Pulse Enter para terminar"
-    read TheEnd
-}
