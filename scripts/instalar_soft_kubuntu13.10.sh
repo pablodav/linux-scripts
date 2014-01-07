@@ -137,7 +137,7 @@ aptofflinegenerador(){
 }
 
 usararchivoaptoffline(){
-    if [ $aptofflinefile ] then
+    if [ $aptofflinefile ] ; then
     sudo apt-offline install $aptoffline
     fi
 }
