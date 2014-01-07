@@ -5,14 +5,13 @@
 #Autores: Pablo Estigarribia
 #gusolfraybentos@googlegroups.com
 #pablodav@gmail.com
+# Ejecute desde una terminal con ./instalar_soft_kubuntu13.10.sh 
+
 appsmin=" arista scribus audacity kdenlive gimp inkscape digikam quicksynergy imagination dvdstyler ubuntu-restricted-extras flashplugin-nonfree rekonq network-manager-openvpn vlc shutter apt-offline qapt-deb-installer transmission-qt "
-appsinstall=" hydrogen gimp inkscape octave3.2 blender language-pack-es language-pack-kde-es openoffice.org-base qcad gcompris gcompris-sound-es dvdrip tuxpaint ocrad xsane  wine cheese thunderbird thunderbird-locale-es-es filezilla manpages-es deja-dup yakuake kazam mypaint calibre k3b bookletimposer ubuntuone-control-panel-qt " #Aplicaciones a instalar
+appsinstall=" hydrogen gimp inkscape octave3.2 blender language-pack-es language-pack-kde-es openoffice.org-base qcad gcompris gcompris-sound-es dvdrip tuxpaint ocrad xsane  wine cheese thunderbird thunderbird-locale-es-es filezilla manpages-es deja-dup yakuake kazam mypaint calibre k3b ubuntuone-control-panel-qt " #Aplicaciones a instalar
 appsdevel=" kdevelop vim python-virtualenv "
 appsremote=" remmina x2goclient ssh x2goserver qweborf "
 opcautomatic="n" #Instalación automáticaa del sistema
-#opcsourcesuy="n" #Agregar repositorios de Uruguay
-#opcaptcacher="n" #Agrregar un repositorio apt-cacher
-#opcremoveaptcacher="n" #Remover APT cacher
 opcappsinstall="n" #Instalar aplicaciones
 opcaddmedibuntu="n" #Add medibuntu repository
 opcaddextras="n" #Add extras
@@ -23,7 +22,12 @@ aptofflinefile="archivoaptofflinekubuntu1310.zip"
 opcaptofflinegen="aptofflinegen" #Variable para generar archivo aptoffline
 
 
-
+#Added support for precise
+codename=`cat /etc/lsb-release | grep CODENAME | cut -d = -f 2`
+if [ $codename != precise ] ; then 
+    otherapps=" bookletimposer "
+    $appsinstall="$appsinstall $otherapps"
+fi
 
 
 function instalarapps {
@@ -80,10 +84,12 @@ function usararchivoaptoffline {
 
 
 function salida {
-    echo -e "\n Gracias por Utilizar el script de instalación de aplicaciones útiles para Linux Kubuntu, inicie el script escribiendo $0 $opcaptofflinegen 
+    echo -e "\n Gracias por Utilizar el script de instalación de aplicaciones útiles para Linux Kubuntu, inicie el 
+    script escribiendo $0 $opcaptofflinegen para que genere el archivo offline para usar en otra instalación.
     \n Por errores o sugerencias pablodav@gmail.com. \n" | fmt
     echo "Instalación finalizada. Pulse Enter para terminar"
     read TheEnd
+    exit 0
 }
  
 function instalarrequerimientos {
@@ -97,39 +103,42 @@ fi
 
 case "$1" in
     $opcaptofflinegen) 
-    aptofflinegenerador
-    salida
+        aptofflinegenerador
+        salida
+    ;;
+    'autoinstall')
+        echo "Se Instalaran los programas  $appsmin $appsinstall $appsremote $appsdevel y todas las configuraciones automáticamente"
+        usararchivoaptoffline
+        instalarrequerimientos
+        aplicacionesremotas
+        extras
+        instalarapps
+        actualizar
+        salida
+    ;;
+    'manualinstall')
+        echo -e "¿Desea instalar las aplicaciones: \n $appsinstall $appsmin $appsdevel ? \n y/n:" | fmt
+        read opcappsinstall
+        echo "¿Desea agregar los repositorios de medibuntu? y/n:"
+        read opcaddextras
+        echo "¿Desea actualizar todo el sistema una vez finalizado? y/n:"
+        read opcupgrade
+        echo "¿Desea agregar apps remotas? y/n:"
+        read opcaddremote
+    ;;
+    *)
+        echo -e "\n\n Modo de uso: Ejecute el programa con una de estas opciones: \n
+        $opcaptofflinegen : Para generar un archivo $aptofflinefile con todos los datos de los programas
+        a instalar, esto se ejecuta en una máquina sin los programas instalados, así descarga y guarda todo
+        en el archivo $aptofflinefile para ser usado luego en otras computadoras. Lo único que tiene que hacer
+        para usarlo es tener el archivo $aptofflinefile en el mismo directorio que el script de ejecución $0 \n
+        autoinstall: Se encargará de usar el archivo $aptofflinefile si existe e instalar todos los programas: 
+        $appsmin $appsinstall $appsremote $appsdevel \n
+        manualinstall: preguntará por las opciones que desea instalar \n\n
+        Ejemplo: $0 manualinstall \n\n" | fmt
     ;;
 esac
 
-
-cd ~
-#Algunas preguntas para preparar la instalación
-echo -e "Este programa le guiará para realizar la instalación de algunas utilidades en su sistema, puede dejar que realize las configuraciones automáticamente. \n"
-echo "¿Desea realizar las configuraciones automáticamente? y/n (para cancelar la ejecución Ctrl+c)"
-read opcautomatic
-
-
-
-if [ "$opcautomatic" = "y" ] ; then
-    echo "Se Instalaran los programas "$appsinstall""$appsmin" y todas las configuraciones automáticamente"
-    usararchivoaptoffline
-    instalarrequerimientos
-    aplicacionesremotas
-    extras
-    instalarapps
-    actualizar
-    salida
-else
-    echo -e "¿Desea instalar las aplicaciones: \n $appsinstall $appsmin $appsdevel ? \n y/n:" | fmt
-    read opcappsinstall
-    echo "¿Desea agregar los repositorios de medibuntu? y/n:"
-    read opcaddextras
-    echo "¿Desea actualizar todo el sistema una vez finalizado? y/n:"
-    read opcupgrade
-    echo "¿Desea agregar apps remotas? y/n:"
-    read opcaddremote
-fi
 
 if [ "$opcappsinstall" = "y" ] || [ "$opcaddextras" = "y" ] || [ "$opcupgrade" = "y" ] || [ "$opcaddremote" = "y" ] ; then
       instalarrequerimientos
@@ -150,5 +159,6 @@ fi
 
 if [ "$opcupgrade" = "y" ] ; then
     actualizar
-    salida
 fi
+
+salida
