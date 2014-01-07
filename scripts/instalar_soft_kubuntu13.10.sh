@@ -7,6 +7,8 @@
 #pablodav@gmail.com
 # Ejecute desde una terminal con ./instalar_soft_kubuntu13.10.sh 
 
+codename=`cat /etc/lsb-release | grep CODENAME | cut -d = -f 2`
+
 appsmin=" arista scribus audacity kdenlive gimp inkscape digikam quicksynergy imagination dvdstyler ubuntu-restricted-extras flashplugin-nonfree rekonq network-manager-openvpn vlc shutter apt-offline qapt-deb-installer transmission-qt "
 appsinstall=" hydrogen gimp inkscape octave3.2 blender language-pack-es language-pack-kde-es openoffice.org-base qcad gcompris gcompris-sound-es dvdrip tuxpaint ocrad xsane  wine cheese thunderbird thunderbird-locale-es-es filezilla manpages-es deja-dup yakuake kazam mypaint calibre k3b ubuntuone-control-panel-qt " #Aplicaciones a instalar
 appsdevel=" kdevelop vim python-virtualenv "
@@ -18,12 +20,11 @@ opcaddextras="n" #Add extras
 opcupgrade="n" #Actualizar sistema
 opcaddremote="n" #Agregar apps remotas
 opcuseaptoffline="n" # Usar archivo apt-offline
-aptofflinefile="archivoaptofflinekubuntu1310.zip"
+aptofflinefile="archivoaptofflinekubuntu$codename.zip"
 opcaptofflinegen="aptofflinegen" #Variable para generar archivo aptoffline
 
 
 #Added support for precise
-codename=`cat /etc/lsb-release | grep CODENAME | cut -d = -f 2`
 if [ $codename != precise ] ; then 
     otherapps=" bookletimposer "
     $appsinstall="$appsinstall $otherapps"
@@ -125,6 +126,9 @@ case "$1" in
         read opcupgrade
         echo "¿Desea agregar apps remotas? y/n:"
         read opcaddremote
+    ;;
+    'hacercafe')
+         echo -e "\n\n Este script le ará un rico Café a Diego y Diego olvidará su amargura!!!"
     ;;
     *)
         echo -e "\n\n Modo de uso: Ejecute el programa con una de estas opciones: \n
