@@ -112,8 +112,8 @@ case "$1" in
     ;;
     'autoinstall')
         echo "Se Instalaran los programas  $appsmin $appsinstall $appsremote $appsdevel y todas las configuraciones automáticamente"
-        usararchivoaptoffline
         instalarrequerimientos
+        usararchivoaptoffline
         aplicacionesremotas
         extras
         instalarapps
