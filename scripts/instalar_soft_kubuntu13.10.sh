@@ -34,7 +34,7 @@ if [ "$codename" == "precise" ] ; then
     fi
 else
     otherapps=" bookletimposer "
-    $appsinstall="$appsinstall $otherapps"
+    appsinstall="$appsinstall $otherapps"
 fi
 
 
