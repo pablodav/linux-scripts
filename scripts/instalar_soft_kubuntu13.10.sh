@@ -82,7 +82,7 @@ function aptofflinegenerador {
 
 function usararchivoaptoffline {
     if [ $aptofflinefile ] ; then
-    sudo apt-offline install $aptoffline
+    sudo apt-offline install $aptofflinefile
     fi
 }
 
