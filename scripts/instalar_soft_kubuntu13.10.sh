@@ -10,7 +10,7 @@
 codename=`cat /etc/lsb-release | grep CODENAME | cut -d = -f 2`
 
 appsmin=" arista scribus audacity kdenlive gimp inkscape digikam quicksynergy imagination dvdstyler ubuntu-restricted-extras flashplugin-nonfree rekonq network-manager-openvpn vlc shutter apt-offline qapt-deb-installer transmission-qt "
-appsinstall=" hydrogen gimp inkscape octave3.2 blender language-pack-es language-pack-kde-es openoffice.org-base qcad gcompris gcompris-sound-es dvdrip tuxpaint ocrad xsane  wine cheese thunderbird thunderbird-locale-es-es filezilla manpages-es deja-dup yakuake kazam mypaint calibre k3b ubuntuone-control-panel-qt " #Aplicaciones a instalar
+appsinstall=" hydrogen gimp inkscape octave3.2 blender language-pack-es language-pack-kde-es qcad gcompris gcompris-sound-es dvdrip tuxpaint ocrad xsane  wine cheese thunderbird thunderbird-locale-es-es filezilla manpages-es deja-dup yakuake kazam mypaint calibre k3b ubuntuone-control-panel-qt " #Aplicaciones a instalar
 appsdevel=" kdevelop vim python-virtualenv "
 appsremote=" remmina x2goclient ssh x2goserver qweborf "
 opcautomatic="n" #Instalación automáticaa del sistema
@@ -28,6 +28,13 @@ opcaptofflinegen="aptofflinegen" #Variable para generar archivo aptoffline
 if [ $codename != precise ] ; then 
     otherapps=" bookletimposer "
     $appsinstall="$appsinstall $otherapps"
+    
+#Fix drivers issues (ubuntu 12.04)
+    if [ ! /etc/Wireless/RT2860STA/RT2860STA.dat ] ; then 
+        sudo mkdir -p /etc/Wireless/RT2860STA/
+        sudo touch /etc/Wireless/RT2860STA/RT2860STA.dat
+        sudo service network-manager restart
+    fi
 fi
 
 
@@ -53,10 +60,6 @@ function extras {
     sudo apt-fast install -y --force-yes handbrake-gtk
     sudo apt-fast install -y --force-yes scratch 
 }
-#Fix drivers issues (ubuntu 12.04)
-#	sudo mkdir -p /etc/Wireless/RT2860STA/
-#	sudo touch /etc/Wireless/RT2860STA/RT2860STA.dat
-#	sudo service network-manager restart
 
 function aplicacionesremotas {
     sudo add-apt-repository ppa:x2go/stable
