@@ -25,16 +25,16 @@ opcaptofflinegen="aptofflinegen" #Variable para generar archivo aptoffline
 
 
 #Added support for precise
-if [ $codename != precise ] ; then 
-    otherapps=" bookletimposer "
-    $appsinstall="$appsinstall $otherapps"
-    
+if [ "$codename" == "precise" ] ; then 
 #Fix drivers issues (ubuntu 12.04)
     if [ ! /etc/Wireless/RT2860STA/RT2860STA.dat ] ; then 
         sudo mkdir -p /etc/Wireless/RT2860STA/
         sudo touch /etc/Wireless/RT2860STA/RT2860STA.dat
         sudo service network-manager restart
     fi
+else
+    otherapps=" bookletimposer "
+    $appsinstall="$appsinstall $otherapps"
 fi
 
 
