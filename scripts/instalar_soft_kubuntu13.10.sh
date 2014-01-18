@@ -75,6 +75,11 @@ function extras {
     sudo apt-fast install -y --force-yes handbrake-gtk
     sudo apt-fast install -y --force-yes scratch 
     sudo apt-fast install -y --force-yes everpad 
+    sudo apt-fast install -y --force-yes software-center
+    if [ ! -x /usr/bin/steam ] ; then 
+        wget http://media.steampowered.com/client/installer/steam.deb 
+        sudo dpkg -i steam.deb
+    fi
 }
 
 function aplicacionesremotas {
