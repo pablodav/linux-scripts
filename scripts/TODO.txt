@@ -1,4 +1,4 @@
-Agregar drivers brother y hp. 
-Agregar software Center Ubuntu?
-Agregar Steam? 
+Agregar drivers brother y hp. [hecho]
+Agregar software Center Ubuntu?  [hecho]
+Agregar Steam?  [hecho]
 Agregar Skype? 
