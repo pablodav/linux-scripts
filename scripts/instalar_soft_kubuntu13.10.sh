@@ -167,16 +167,16 @@ case "$1" in
         a instalar, esto se ejecuta en una máquina sin los programas instalados, así descarga y guarda todo
         en el archivo $aptofflinefile para ser usado luego en otras computadoras. Lo único que tiene que hacer
         para usarlo es tener el archivo $aptofflinefile en el mismo directorio que el script de ejecución $0 \n
-        \033[4mautoinstall:\033[0m \n
+        \033[4mautoinstall\033[0m: \n
         Se encargará de usar el archivo $aptofflinefile si existe e instala todos los programas: 
         $appsmin $appsinstall $appsremote $appsdevel \n
-        \033[4samsungdriver:\033[0m \n
-        Agrega el repositorio de drivers de Samsung: http://www.bchemnet.com/suldr/
-        \033[4driversprinters:\033[0m \n
-        Instala los drivers $drivers
-        \033[4mmanualinstall:\033[0m \n
+        \033[4msamsungdriver\033[0m: \n
+        Agrega el repositorio de drivers de Samsung: http://www.bchemnet.com/suldr/ \n
+        \033[4mdriversprinters\033[0m: \n
+        Instala los drivers $drivers \n
+        \033[4mmanualinstall\033[0m: \n
         preguntará por las opciones que desea instalar \n\n
-        Ejemplo: $0 manualinstall \n\n" | fmt
+        Ejemplo: $0 manualinstall \n\n" | fmt -c 
     ;;
 esac
 
