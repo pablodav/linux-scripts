@@ -22,6 +22,7 @@ opcaddremote="n" #Agregar apps remotas
 opcuseaptoffline="n" # Usar archivo apt-offline
 aptofflinefile="archivoaptofflinekubuntu$codename.zip"
 opcaptofflinegen="aptofflinegen" #Variable para generar archivo aptoffline
+drivers=" epson-escpr brother-cups-wrapper-laser  "
 
 
 #Added support for precise
@@ -37,6 +38,18 @@ else
     appsinstall="$appsinstall $otherapps"
 fi
 
+function instaladriversamsung {
+    #fuente: http://www.bchemnet.com/suldr/
+    sudo wget -O - http://www.bchemnet.com/suldr/suldr.gpg | sudo apt-key add - #Agrega clave
+    sudo bash -c 'echo "deb http://www.bchemnet.com/suldr/ debian extra" >> /etc/apt/sources.list.d/samsungdriver.list'
+    sudo apt-get update
+    echo -e 'Favor utilice Synaptic para buscar drivers que empiezan con suld- \n
+    Más información encontrará en http://www.bchemnet.com/suldr/ \n'
+}
+
+function instaladriversprinters {
+    sudo apt-get install $drivers
+}
 
 function instalarapps {
     #Actualizo los datos de apt-get
@@ -53,12 +66,15 @@ function extras {
     echo "Instalando extras"
     sudo add-apt-repository ppa:scratch/ppa
     sudo add-apt-repository ppa:stebbins/handbrake-releases
-    sudo add-apt-repository	ppa:maxim-s-barabash/sk1project
+    sudo add-apt-repository ppa:maxim-s-barabash/sk1project
     sudo add-apt-repository ppa:bjfs/ppa
+    sudo add-apt-repository ppa:nvbn-rm/ppa
+    sudo add-apt-repository ppa:libreoffice/ppa
     sudo apt-fast update
     sudo apt-fast install -y --force-yes python-sk1
     sudo apt-fast install -y --force-yes handbrake-gtk
     sudo apt-fast install -y --force-yes scratch 
+    sudo apt-fast install -y --force-yes everpad 
 }
 
 function aplicacionesremotas {
@@ -133,6 +149,12 @@ case "$1" in
     'hacercafe')
          echo -e "\n\n Este script le ará un rico Café a Diego y Diego olvidará su amargura!!!"
     ;;
+    'samsungdriver')
+        instaladriversamsung
+    ;;
+    'driversprinters')
+        instaladriversprinters
+    ;;
     *)
         echo -e "\n\n Modo de uso: Ejecute el programa con una de estas opciones: \n
         \033[4m$opcaptofflinegen\033[0m: \n
@@ -143,6 +165,10 @@ case "$1" in
         \033[4mautoinstall:\033[0m \n
         Se encargará de usar el archivo $aptofflinefile si existe e instala todos los programas: 
         $appsmin $appsinstall $appsremote $appsdevel \n
+        \033[4samsungdriver:\033[0m \n
+        Agrega el repositorio de drivers de Samsung: http://www.bchemnet.com/suldr/
+        \033[4driversprinters:\033[0m \n
+        Instala los drivers $drivers
         \033[4mmanualinstall:\033[0m \n
         preguntará por las opciones que desea instalar \n\n
         Ejemplo: $0 manualinstall \n\n" | fmt
