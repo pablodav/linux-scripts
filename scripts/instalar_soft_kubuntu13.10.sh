@@ -64,12 +64,12 @@ function instalarapps {
 
 function extras {
     echo "Instalando extras"
-    sudo add-apt-repository ppa:scratch/ppa
-    sudo add-apt-repository ppa:stebbins/handbrake-releases
-    sudo add-apt-repository ppa:maxim-s-barabash/sk1project
-    sudo add-apt-repository ppa:bjfs/ppa
-    sudo add-apt-repository ppa:nvbn-rm/ppa
-    sudo add-apt-repository ppa:libreoffice/ppa
+    sudo add-apt-repository -y ppa:scratch/ppa
+    sudo add-apt-repository -y ppa:stebbins/handbrake-releases
+    sudo add-apt-repository -y ppa:maxim-s-barabash/sk1project
+    sudo add-apt-repository -y ppa:bjfs/ppa
+    sudo add-apt-repository -y ppa:nvbn-rm/ppa
+    sudo add-apt-repository -y ppa:libreoffice/ppa
     sudo apt-fast update
     sudo apt-fast install -y --force-yes python-sk1
     sudo apt-fast install -y --force-yes handbrake-gtk
@@ -83,7 +83,7 @@ function extras {
 }
 
 function aplicacionesremotas {
-    sudo add-apt-repository ppa:x2go/stable
+    sudo add-apt-repository -y ppa:x2go/stable
     sudo apt-fast update
     sudo apt-fast install -y $appsremote
 }
@@ -119,7 +119,7 @@ function salida {
  
 function instalarrequerimientos {
 if [ ! -x /usr/sbin/apt-fast ] && [ ! -x /usr/bin/apt-offline ] ; then
-    sudo add-apt-repository ppa:apt-fast/stable
+    sudo add-apt-repository -y ppa:apt-fast/stable
     sudo apt-get update
     sudo apt-get -y install apt-fast
     sudo apt-fast -y install apt-offline
