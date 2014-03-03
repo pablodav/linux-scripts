@@ -10,7 +10,7 @@
 codename=`cat /etc/lsb-release | grep CODENAME | cut -d = -f 2`
 
 appsmin=" arista scribus audacity kdenlive gimp inkscape digikam quicksynergy imagination dvdstyler ubuntu-restricted-extras flashplugin-nonfree rekonq network-manager-openvpn vlc shutter apt-offline qapt-deb-installer transmission-qt "
-appsinstall=" hydrogen gimp inkscape octave3.2 blender language-pack-es language-pack-kde-es qcad gcompris gcompris-sound-es dvdrip tuxpaint ocrad xsane  wine cheese thunderbird thunderbird-locale-es-es filezilla manpages-es deja-dup yakuake kazam mypaint calibre k3b ubuntuone-control-panel-qt " #Aplicaciones a instalar
+appsinstall=" libreoffice-calc libreoffice-impress hugin-tools hydrogen gimp inkscape octave3.2 blender language-pack-es language-pack-kde-es qcad gcompris gcompris-sound-es dvdrip tuxpaint ocrad xsane  wine cheese thunderbird thunderbird-locale-es-es filezilla manpages-es deja-dup yakuake kazam mypaint calibre k3b ubuntuone-control-panel-qt " #Aplicaciones a instalar
 appsdevel=" kdevelop vim python-virtualenv "
 appsremote=" remmina x2goclient ssh x2goserver qweborf "
 opcautomatic="n" #Instalación automáticaa del sistema
