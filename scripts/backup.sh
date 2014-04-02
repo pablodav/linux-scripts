@@ -23,7 +23,8 @@ date
 echo
 
 # Backup the files using tar.
-tar czf $dest/$archive_file $backup_files
+# Use p to preserve permissions 
+tar czfp $dest/$archive_file $backup_files
 
 # Print end status message.
 echo
