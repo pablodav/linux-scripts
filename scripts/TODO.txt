@@ -2,3 +2,5 @@ Agregar drivers brother y hp. [hecho]
 Agregar software Center Ubuntu?  [hecho]
 Agregar Steam?  [hecho]
 Agregar Skype? 
+Agregado libreoffice calc and impress [hecho]
+Agregar opción de repo temporal [wip]
