@@ -124,7 +124,7 @@ function instalarrequerimientos {
 if [ ! -x /usr/sbin/apt-fast ] && [ ! -x /usr/bin/apt-offline ] ; then
     sudo add-apt-repository -y ppa:apt-fast/stable
     #Temporal workaround to get apt-fast working on trusty thar:
-    sudo sed 's/trusty/saucy/g' /etc/apt/sources.list.d/apt-fast-stable-*.list
+    sudo sed -i 's/trusty/saucy/g' /etc/apt/sources.list.d/apt-fast-stable-*.list
     sudo apt-get update
     sudo apt-get -y install apt-fast
     sudo apt-fast install -y apt-offline
