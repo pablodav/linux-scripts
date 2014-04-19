@@ -1,11 +1,11 @@
 #!/bin/bash
-#Version del script = 0.1.7
+#Version del script = 0.1.8
 #Licencia GPL V3
-#Fecha de realizado 13 12 2013
+#Fecha de realizado 19/04/2014
 #Autores: Pablo Estigarribia
 #gusolfraybentos@googlegroups.com
 #pablodav@gmail.com
-# Ejecute desde una terminal con ./instalar_soft_kubuntu13.10.sh 
+# Ejecute desde una terminal con ./instalar_soft_kubuntu14.04.sh 
 
 codename=`cat /etc/lsb-release | grep CODENAME | cut -d = -f 2`
 
@@ -13,6 +13,7 @@ appsmin=" arista scribus audacity kdenlive gimp inkscape digikam quicksynergy im
 appsinstall=" libreoffice-calc libreoffice-impress hugin-tools hydrogen gimp inkscape octave3.2 blender language-pack-es language-pack-kde-es qcad gcompris gcompris-sound-es dvdrip tuxpaint ocrad xsane  wine cheese thunderbird thunderbird-locale-es-es filezilla manpages-es deja-dup yakuake kazam mypaint calibre k3b ubuntuone-control-panel-qt " #Aplicaciones a instalar
 appsdevel=" kdevelop vim python-virtualenv "
 appsremote=" remmina x2goclient ssh x2goserver qweborf "
+appsextras=" handbrake scratch everpad software-center  "
 opcautomatic="n" #Instalación automáticaa del sistema
 opcappsinstall="n" #Instalar aplicaciones
 opcaddmedibuntu="n" #Add medibuntu repository
@@ -38,6 +39,13 @@ else
     appsinstall="$appsinstall $otherapps"
 fi
 
+function instalador() {
+    if [ ! -x /usr/sbin/apt-fast ] ; then 
+        paquetes=${!1}
+        sudo apt-fast install -y --force-yes $paquetes
+    fi
+}
+
 function instaladriversamsung {
     #fuente: http://www.bchemnet.com/suldr/
     sudo wget -O - http://www.bchemnet.com/suldr/suldr.gpg | sudo apt-key add - #Agrega clave
@@ -58,7 +66,9 @@ function instalarapps {
     echo "apt-get -f install"
     sudo apt-get -y -f install
     echo "Instalando aplicaciones"$appsinstall""$appsmin""$appsdevel
-    sudo apt-fast install -y --force-yes $appsinstall $appsmin $appsdevel
+    instalador appsinstall 
+    instalador appsmin 
+    instalador appsdevel
 }
 
 
@@ -69,10 +79,7 @@ function extras {
     sudo add-apt-repository -y ppa:libreoffice/ppa
     sudo apt-fast update
 #    sudo apt-fast install -y --force-yes python-sk1
-    sudo apt-fast install -y --force-yes handbrake-gtk
-    sudo apt-fast install -y --force-yes scratch 
-    sudo apt-fast install -y --force-yes everpad 
-    sudo apt-fast install -y --force-yes software-center
+    instalador appsextras
     if [ ! -x /usr/bin/steam ] ; then 
         wget http://media.steampowered.com/client/installer/steam.deb 
         sudo dpkg -i steam.deb
@@ -82,7 +89,7 @@ function extras {
 function aplicacionesremotas {
     #sudo add-apt-repository -y ppa:x2go/stable
     #sudo apt-fast update
-    sudo apt-fast install -y $appsremote
+    instalador appsremote
 }
 
 function actualizar {
@@ -93,7 +100,6 @@ function actualizar {
 
 function aptofflinegenerador {
     echo "inicializando generador apt-offline"
-    instalarrequerimientos
     sudo apt-offline set apt.sig --update --upgrade --install-packages $appsinstall $appsdevel $appsmin
     sudo apt-offline get apt.sig --threads 5 --bundle $aptofflinefile
 }
@@ -121,7 +127,7 @@ if [ ! -x /usr/sbin/apt-fast ] && [ ! -x /usr/bin/apt-offline ] ; then
     sudo sed 's/trusty/saucy/g' /etc/apt/sources.list.d/apt-fast-stable-*.list
     sudo apt-get update
     sudo apt-get -y install apt-fast
-    sudo apt-fast -y install apt-offline
+    sudo apt-fast install -y apt-offline
 fi
 }
 
@@ -140,6 +146,7 @@ sed 's/http:\/\/$repo/http:\/\/uy.archive.ubuntu.com/g' /etc/apt/sources.list
 
 case "$1" in
     $opcaptofflinegen) 
+        instalarrequerimientos
         aptofflinegenerador
         salida
     ;;
