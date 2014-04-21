@@ -40,8 +40,9 @@ else
 fi
 
 function instalador() {
-    if [ ! -x /usr/sbin/apt-fast ] ; then 
+    if [ -x /usr/sbin/apt-fast ] ; then 
         paquetes=${!1}
+        echo -e 'Instalando paquetes: $paquetes ' | fmt -c
         sudo apt-fast install -y --force-yes $paquetes
     fi
 }
@@ -65,7 +66,6 @@ function instalarapps {
     sudo apt-get update
     echo "apt-get -f install"
     sudo apt-get -y -f install
-    echo "Instalando aplicaciones"$appsinstall""$appsmin""$appsdevel
     instalador appsinstall 
     instalador appsmin 
     instalador appsdevel
