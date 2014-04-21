@@ -117,7 +117,7 @@ function usararchivoaptoffline {
 
 function respaldararchives {
     echo "Archivando cache en $archivesfile, puede copiarlo para reutilizar"
-    uvfp $archivesfile /var/cache/apt/archives
+    tar uvfp $archivesfile /var/cache/apt/archives
 }
 
 
