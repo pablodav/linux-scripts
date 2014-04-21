@@ -9,7 +9,7 @@
 
 codename=`cat /etc/lsb-release | grep CODENAME | cut -d = -f 2`
 
-appsmin=" arista scribus audacity kdenlive gimp inkscape digikam quicksynergy imagination dvdstyler ubuntu-restricted-extras flashplugin-nonfree rekonq network-manager-openvpn vlc shutter apt-offline qapt-deb-installer transmission-qt "
+appsmin=" arista scribus audacity kdenlive gimp inkscape digikam quicksynergy imagination dvdstyler ubuntu-restricted-extras rekonq network-manager-openvpn vlc shutter apt-offline qapt-deb-installer transmission-qt "
 appsinstall=" libreoffice-calc libreoffice-impress hugin-tools hydrogen gimp inkscape qtoctave freemat blender language-pack-es language-pack-kde-es librecad gcompris gcompris-sound-es dvdrip tuxpaint ocrad xsane  wine cheese thunderbird thunderbird-locale-es-es filezilla manpages-es deja-dup yakuake kazam mypaint calibre k3b " #Aplicaciones a instalar
 appsdevel=" kdevelop vim python-virtualenv "
 appsremote=" remmina x2goclient ssh x2goserver qweborf "
@@ -24,6 +24,7 @@ opcuseaptoffline="n" # Usar archivo apt-offline
 aptofflinefile="archivoaptofflinekubuntu$codename.zip"
 opcaptofflinegen="aptofflinegen" #Variable para generar archivo aptoffline
 drivers=" epson-escpr brother-cups-wrapper-laser  "
+archivesfile="archivesfile.tar"
 
 
 #Added support for precise
@@ -42,7 +43,7 @@ fi
 function instalador() {
     if [ -x /usr/sbin/apt-fast ] ; then 
         paquetes=${!1}
-        echo -e 'Instalando paquetes: $paquetes ' | fmt -c
+        echo -e "Instalando paquetes: $paquetes " | fmt -c
         sudo apt-fast install -y --force-yes $paquetes
     fi
 }
@@ -108,6 +109,15 @@ function usararchivoaptoffline {
     if [ $aptofflinefile ] ; then
     sudo apt-offline install $aptofflinefile
     fi
+    #Descomprimir cache apt: sudo tar xvf archives.tar -C /
+    if [ $archivesfile ] ; then 
+    sudo tar xvf $archivesfile -C /
+    fi
+}
+
+function respaldararchives {
+    echo "Archivando cache en $archivesfile, puede copiarlo para reutilizar"
+    uvfp $archivesfile /var/cache/apt/archives
 }
 
 
@@ -158,6 +168,7 @@ case "$1" in
         extras
         instalarapps
         actualizar
+        respaldararchives
         salida
     ;;
     'manualinstall')
@@ -179,6 +190,9 @@ case "$1" in
     'driversprinters')
         instaladriversprinters
     ;;
+    'respaldararchives' )
+        respaldararchives
+    ;;
     *)
         echo -e "\n\n Modo de uso: Ejecute el programa con una de estas opciones: \n
         \033[4m$opcaptofflinegen\033[0m: \n
@@ -186,6 +200,9 @@ case "$1" in
         a instalar, esto se ejecuta en una máquina sin los programas instalados, así descarga y guarda todo
         en el archivo $aptofflinefile para ser usado luego en otras computadoras. Lo único que tiene que hacer
         para usarlo es tener el archivo $aptofflinefile en el mismo directorio que el script de ejecución $0 \n
+        \033[4mrespaldararchives\033[0m: \n
+        Puede generar un archivo $archivesfile con esta opción, esto respalda todos los archivos del cache de apt. 
+        luego se usa automáticamente si está en el mismo directorio donde se ejecuta eñ script. 
         \033[4mautoinstall\033[0m: \n
         Se encargará de usar el archivo $aptofflinefile si existe e instala todos los programas: 
         $appsmin $appsinstall $appsremote $appsdevel \n
