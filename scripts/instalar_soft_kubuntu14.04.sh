@@ -202,7 +202,7 @@ case "$1" in
         para usarlo es tener el archivo $aptofflinefile en el mismo directorio que el script de ejecución $0 \n
         \033[4mrespaldararchives\033[0m: \n
         Puede generar un archivo $archivesfile con esta opción, esto respalda todos los archivos del cache de apt. 
-        luego se usa automáticamente si está en el mismo directorio donde se ejecuta eñ script. 
+        luego se usa automáticamente si está en el mismo directorio donde se ejecuta eñ script. \n
         \033[4mautoinstall\033[0m: \n
         Se encargará de usar el archivo $aptofflinefile si existe e instala todos los programas: 
         $appsmin $appsinstall $appsremote $appsdevel \n
