@@ -88,8 +88,9 @@ function extras {
 }
 
 function aplicacionesremotas {
-    #sudo add-apt-repository -y ppa:x2go/stable
-    #sudo apt-fast update
+    sudo add-apt-repository -y ppa:x2go/stable
+    sudo sed -i 's/trusty/saucy/g' /etc/apt/sources.list.d/x2go-stable-*.list
+    sudo apt-fast update
     instalador appsremote
 }
 
