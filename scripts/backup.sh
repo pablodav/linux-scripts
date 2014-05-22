@@ -3,6 +3,8 @@
 #
 # Backup to NFS mount script.
 #
+# Info to add: --exclude=proc --exclude=sys --exclude=dev/pts --exclude=backups 
+# http://www.aboutdebian.com/tar-backup.htm
 ####################################
 
 # What to backup.
