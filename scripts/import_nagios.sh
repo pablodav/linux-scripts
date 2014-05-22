@@ -24,7 +24,7 @@ PARENTS=`echo ${line} | cut -d\; -f4`
 #IMAGE=`echo ${line} | cut -d\; -f3`
 
 cat hosts.template | sed -e "s/TEMP_NAME/$NAME/" -e "s/TEMP_ALIAS/$ALIAS/" -e "s/TEMP_IP/$ADDRESS/" -e \
-"s/TEMP_HOSTGROUPS/$HOSTGROUPS/" -e "s/TEMP_PARENTS/$PARENTS/" >> hosts.cfg
+ -e "s/TEMP_PARENTS/$PARENTS/" >> hosts.cfg
 done
 #
 # Example for hosts.template file:
