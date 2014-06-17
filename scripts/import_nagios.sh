@@ -20,11 +20,14 @@ NAME=`echo ${line} | cut -d\; -f1`
 ALIAS=`echo ${line} | cut -d\; -f2`
 ADDRESS=`echo ${line} | cut -d\; -f3`
 PARENTS=`echo ${line} | cut -d\; -f4`
+NOTES=`echo ${line} | cut -d\; -f5`
+NOTESURL=`echo ${line} | cut -d\; -f6`
 #HOSTGROUPS=`echo ${line} | cut -d\; -f5`
 #IMAGE=`echo ${line} | cut -d\; -f3`
+echo "Notes url is: $NOTESURL"
 
-cat hosts.template | sed -e "s/TEMP_NAME/$NAME/" -e "s/TEMP_ALIAS/$ALIAS/" -e "s/TEMP_IP/$ADDRESS/" -e \
-"s/TEMP_PARENTS/$PARENTS/" >> hosts.cfg
+cat hosts.template | sed -e "s,TEMP_NAME,$NAME," -e "s,TEMP_ALIAS,$ALIAS," -e "s,TEMP_IP,$ADDRESS," \
+-e "s,TEMP_PARENTS,$PARENTS," -e "s,TEMP_NOTES,$NOTES," -e "s,TEMP_URLNOTES,$NOTESURL," >> hosts.cfg
 done
 #
 # Example for hosts.template file:
@@ -34,4 +37,6 @@ done
 #        alias TEMP_ALIAS
 #        address TEMP_IP
 #        parents TEMP_PARENTS
+#        notes  TEMP_NOTES
+#        notes_url      TEMP_URLNOTES
 #        }
