@@ -1,0 +1,12 @@
+
+
+INSTALLER
+install mirrorbuild.
+install html files and web server
+sync
+install scheduler
+install tftpboot
+install tftp files
+configure tftp
+install DHCP
+configure DHCP
