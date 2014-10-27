@@ -1,0 +1,3 @@
+[TEMP_GROUP;TEMP_NAME]
+    address $IP
+    use_node_name no
