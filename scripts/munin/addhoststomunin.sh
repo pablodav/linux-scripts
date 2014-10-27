@@ -92,4 +92,6 @@ cat $file | while read line;
 
 done
 
+service munin-node restart
+
 
