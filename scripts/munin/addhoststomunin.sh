@@ -4,8 +4,8 @@
 # This script adds hosts to munin, you can schedule it to just maintain a csv file with the values needed. 
 # it needs 2 template files to configure
 
-MUNINTEMPLATESNMPFILE=munin.template.snmp 
-MUNINTEMPLATEFILE=munin.template 
+MUNINTEMPLATESNMPFILE=/usr/local/share/munin/munin.template.snmp 
+MUNINTEMPLATEFILE=/usr/local/share/munin/munin.template 
 MUNINCONFDIR=/etc/munin/munin-conf.d
 HOSTSFILE=/etc/hosts
 SNMPCOMMUNITY=public
@@ -36,7 +36,6 @@ function checkping() {
 }
 
 function addtohosts() {
-    if [[ "$PINGRESULT" == "OK" ]] ; then 
         grep -q -i $NAME $HOSTSFILE
         if [[ $? -eq 0 ]] ; then
             # do nothing as it already is configured
@@ -46,7 +45,6 @@ function addtohosts() {
             echo "nameserver not found, start adding to hosts"
             echo "$IP    $NAME" >> $HOSTSFILE
         fi
-    fi
 }
 
 function addmuninplugins() {
@@ -54,7 +52,6 @@ function addmuninplugins() {
        checksnmp
        if [[ "$SNMPRESULT" == "OK" ]] ; then 
            munin-node-configure --shell --snmp $NAME | xargs -L 1 xargs -t
-           cat $MUNINTEMPLATESNMPFILE | sed -e "s,TEMP_GROUP,$GROUP," -e "s,TEMP_NAME,$NAME," >> $MUNINCONFDIR/$GROUP_hosts.conf
        fi
    fi 
 }
