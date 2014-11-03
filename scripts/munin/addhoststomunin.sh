@@ -52,7 +52,7 @@ function addmuninplugins() {
        checksnmp
        if [[ "$SNMPRESULT" == "OK" ]] ; then 
            munin-node-configure --shell --snmp $NAME | xargs -L 1 xargs -t
-		   cat $MUNINTEMPLATEFILE | sed -e "s,TEMP_GROUP,$GROUP," -e "s,TEMP_NAME,$NAME," >> $MUNINCONFDIR/$GROUP_FILE
+		   cat $MUNINTEMPLATEFILESNMP | sed -e "s,TEMP_GROUP,$GROUP," -e "s,TEMP_NAME,$NAME," >> $MUNINCONFDIR/$GROUP_FILE
        fi
    fi 
 }
@@ -60,7 +60,11 @@ function addmuninplugins() {
 function addhostconfig() {
    checkping
    if [[ "$PINGRESULT" == "OK" ]] ; then 
-   echo "Add if only ping test"
+       if [[ "$TYPE" == "LINUX" ]] ; then 
+       echo "Add if only ping test"
+       munin-node-configure --shell $NAME | xargs -L 1 xargs -t
+       cat $MUNINTEMPLATEFILE | sed -e "s,TEMP_GROUP,$GROUP," -e "s,TEMP_NAME,$NAME," >> $MUNINCONFDIR/$GROUP_FILE
+	   fi
    fi
 }
 
