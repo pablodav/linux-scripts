@@ -90,7 +90,7 @@ cat $file | while read line;
         echo "nameserver not found, start configuring"
         addtohosts
         addmuninplugins
-        #addhostconfig
+        addhostconfig
     fi
 
 done
