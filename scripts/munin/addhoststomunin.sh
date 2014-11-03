@@ -13,7 +13,7 @@ SNMPVERSION=2c
 file=$1
 
 function checksnmp() {
-   snmpstatus -c $SNMPCUMMUNITY -v $SNMPVERSION $NAME
+   snmpstatus -c $SNMPCOMMUNITY -v $SNMPVERSION $NAME
    if [[ $? -eq 0 ]] ; then 
        SNMPRESULT="OK"
    else 
@@ -52,6 +52,7 @@ function addmuninplugins() {
        checksnmp
        if [[ "$SNMPRESULT" == "OK" ]] ; then 
            munin-node-configure --shell --snmp $NAME | xargs -L 1 xargs -t
+		   cat $MUNINTEMPLATEFILE | sed -e "s,TEMP_GROUP,$GROUP," -e "s,TEMP_NAME,$NAME," >> $MUNINCONFDIR/$GROUP_FILE
        fi
    fi 
 }
@@ -59,7 +60,7 @@ function addmuninplugins() {
 function addhostconfig() {
    checkping
    if [[ "$PINGRESULT" == "OK" ]] ; then 
-       cat $MUNINTEMPLATEFILE | sed -e "s,TEMP_GROUP,$GROUP," -e "s,TEMP_NAME,$NAME," >> $MUNINCONFDIR/$GROUP_hosts.conf
+   echo "Add if only ping test"
    fi
 }
 
@@ -72,7 +73,8 @@ cat $file | while read line;
     NAME=`echo ${line} | cut -d\; -f2`
     IP=`echo ${line} | cut -d\; -f3`
     TYPE=`echo ${line} | cut -d\; -f4`
-
+    GROUP_FILE=$GROUP.hosts.conf
+	
     #Check if name is found in configuration
     grep -q -i $NAME $MUNINCONFDIR/*
     if [[ $? -eq 0 ]] ;
@@ -84,7 +86,7 @@ cat $file | while read line;
         echo "nameserver not found, start configuring"
         addtohosts
         addmuninplugins
-        addhostconfig
+        #addhostconfig
     fi
 
 done
