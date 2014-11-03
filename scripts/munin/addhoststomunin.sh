@@ -52,7 +52,7 @@ function addmuninplugins() {
        checksnmp
        if [[ "$SNMPRESULT" == "OK" ]] ; then 
            munin-node-configure --shell --snmp $NAME | xargs -L 1 xargs -t
-		   cat $MUNINTEMPLATEFILESNMP | sed -e "s,TEMP_GROUP,$GROUP," -e "s,TEMP_NAME,$NAME," >> $MUNINCONFDIR/$GROUP_FILE
+		   cat $MUNINTEMPLATESNMPFILE | sed -e "s,TEMP_GROUP,$GROUP," -e "s,TEMP_NAME,$NAME," >> $MUNINCONFDIR/$GROUP_FILE
        fi
    fi 
 }
