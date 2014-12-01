@@ -1,0 +1,10 @@
+
+define host{
+        use cctv-template
+        host_name TEMP_NAME
+        alias TEMP_ALIAS
+        address TEMP_IP
+        parents TEMP_PARENTS
+	notes	TEMP_NOTES
+	notes_url	TEMP_URLNOTES
+        }
