@@ -41,6 +41,16 @@ function addhostconfig() {
    fi
 }
 
+function checkip() {
+    grep -q -i $ADDRESS $NAGIOSCONFDIR/*
+    if [[ $? -eq 0 ]] ; then
+        echo "#ip found, name $NAME seems to be different in configuration!!!!" >> hosts.cfg
+        echo "#ip found, name $NAME seems to be different in configuration!!!!"
+    fi
+}
+
+
+
 cat $file | while read line;
 do
 echo "${line}"
@@ -59,12 +69,14 @@ grep -q -i $NAME $NAGIOSCONFDIR/*
         # do nothing as it already is configured
         echo "nameserver found"
     else
-	 # Start configuring new host
+         # Start configuring new host
         echo "nameserver not found, start configuring"
+        checkip
         addhostconfig
-	fi
+        fi
 
 done
+
 #
 # Example for hosts.template file:
 # define host{
