@@ -4,6 +4,10 @@
 #Needs the files downloaded.
 #Hp 3.15.2
 #Ubuntu 14.04
+#Documentation: http://hplipopensource.com/hplip-web/install/manual/distros/ubuntu.html
+/bin/bash ../../base/reqarchitectures.sh
+reqarchitectures
+
 HP_VERSION=3.15.2
 TAR_FILE=hplip-$HP_VERSION.tar.gz
 DOWNLOAD_LINK=http://prdownloads.sourceforge.net/hplip/$TAR_FILE
@@ -18,7 +22,14 @@ tar xfz $TAR_FILE
 cd $SETUP_FOLDER
 
 #BUILD
-./configure --with-hpppddir=/usr/share/ppd/HP --libdir=/usr/lib64 --prefix=/usr --enable-udev-acl-rules --enable-qt4 --disable-libusb01_build --enable-doc-build --disable-cups-ppd-install --disable-foomatic-drv-install --disable-foomatic-ppd-install --disable-hpijs-install --disable-udev_sysfs_rules --disable-policykit --enable-cups-drv-install --enable-hpcups-install --enable-network-build --enable-dbus-build --enable-scan-build --enable-fax-build
+if [ $Architectures == "x86_64" ] || [ $Architectures == "amd64" ] ; then
+    ./configure --with-hpppddir=/usr/share/ppd/HP --libdir=/usr/lib64 --prefix=/usr --enable-udev-acl-rules --enable-qt4 --disable-libusb01_build --enable-doc-build --disable-cups-ppd-install --disable-foomatic-drv-install --disable-foomatic-ppd-install --disable-hpijs-install --disable-udev_sysfs_rules --disable-policykit --enable-cups-drv-install --enable-hpcups-install --enable-network-build --enable-dbus-build --enable-scan-build --enable-fax-build
+fi 
+
+if [ $Architectures == "x86" ] ; then
+    ./configure --with-hpppddir=/usr/share/ppd/HP --prefix=/usr --enable-udev-acl-rules --enable-qt4 --disable-libusb01_build --enable-doc-build --disable-cups-ppd-install --disable-foomatic-drv-install --disable-foomatic-ppd-install --disable-hpijs-install --disable-udev_sysfs_rules --disable-policykit --enable-cups-drv-install --enable-hpcups-install --enable-network-build --enable-dbus-build --enable-scan-build --enable-fax-build
+fi
+    
 make
 
 #Install
