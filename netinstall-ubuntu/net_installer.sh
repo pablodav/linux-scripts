@@ -40,6 +40,8 @@ install_requirements
 #### Backup - Copy dhcpd.conf
 
 # Configurar tftpd  y archivos tftpd
+# Uncompress tftp installers (i386, amd64)
+# push file var\lib\tftpboot\ubuntu-installer\i386\boot-screens\txt.cfg for installers. 
 
 # Configurar debmirror
 
