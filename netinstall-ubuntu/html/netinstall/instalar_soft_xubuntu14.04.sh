@@ -173,16 +173,14 @@ function salida {
 
 
 function repotemp {
-sed 's/http:\/\/archive.ubuntu.com/http:\/\/$repo/g' /etc/apt/sources.list.d/*
-sed 's/http:\/\/archive.ubuntu.com/http:\/\/$repo/g' /etc/apt/sources.list
-sed 's/http:\/\/uy.archive.ubuntu.com/http:\/\/$repo/g' /etc/apt/sources.list.d/*
-sed 's/http:\/\/uy.archive.ubuntu.com/http:\/\/$repo/g' /etc/apt/sources.list
+sed 's;http://archive.ubuntu.com;http://$repo;g' /etc/apt/sources.list.d/*
+sed 's;http://archive.ubuntu.com;http://$repo;g' /etc/apt/sources.list
+sed 's;http://uy.archive.ubuntu.com;http://$repo;g' /etc/apt/sources.list.d/*
+sed 's;http://uy.archive.ubuntu.com;http://$repo;g' /etc/apt/sources.list
 }
 function backtoroigin {
-sed 's/http:\/\/$repo/http:\/\/archive.ubuntu.com/g' /etc/apt/sources.list.d/*
-sed 's/http:\/\/$repo/http:\/\/archive.ubuntu.com/g' /etc/apt/sources.list
-sed 's/http:\/\/$repo/http:\/\/uy.archive.ubuntu.com/g' /etc/apt/sources.list.d/*
-sed 's/http:\/\/$repo/http:\/\/uy.archive.ubuntu.com/g' /etc/apt/sources.list
+sed 's;http://$repo;http://archive.ubuntu.com;g' /etc/apt/sources.list.d/*
+sed 's;http://$repo;http://archive.ubuntu.com;g' /etc/apt/sources.list
 }
 
 case "$1" in
