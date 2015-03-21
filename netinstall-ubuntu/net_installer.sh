@@ -31,7 +31,9 @@ install_requirements(){
     instalador debrequirements
 }
 
+configure_files(){
 
+}
 
 # Instalar requerimientos
 install_requirements
@@ -41,6 +43,9 @@ install_requirements
 
 # Configurar tftpd  y archivos tftpd
 # Uncompress tftp installers (i386, amd64)
+
+# This section: https://www.debian.org/releases/stable/i386/ch04s05.html.en
+# then for preparing the files: https://www.debian.org/releases/stable/i386/ch04s05.html.en#tftp-images
 # push file var\lib\tftpboot\ubuntu-installer\i386\boot-screens\txt.cfg for installers. 
 
 # Configurar debmirror

@@ -1,4 +1,5 @@
 # Get the Kernel Name
+#Script from: http://stackoverflow.com/questions/106387/is-it-possible-to-detect-32-bit-vs-64-bit-in-a-bash-script
 reqarchitectures()
 {
 Kernel=$(uname -s)
