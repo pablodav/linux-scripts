@@ -101,6 +101,12 @@ sudo rsync -rh --force --chown=root:nogroup var/lib/tftpboot/ubuntu-installer/i3
 
 ### Copiar archivos en html 
 
+# Files to change if ip address changes
+# --------------
+#### var/lib/tftpboot/ubuntu-installer/i386/boot-screens/txt.cfg
+#### html/netinstall/instalar_soft_xubuntu14.04.sh and each version added
+#### html/netinstall/xubuntu.seed
+#### etc/dhcp/dhcpd.conf
 
 # Finalizando
 last_message

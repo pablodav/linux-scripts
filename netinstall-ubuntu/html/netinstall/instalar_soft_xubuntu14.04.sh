@@ -11,6 +11,7 @@
 codename=`cat /etc/lsb-release | grep CODENAME | cut -d = -f 2`
 fecha=`date +%F`
 serialnumber=`sudo sh -c 'dmidecode -s system-serial-number'`
+httpserver=192.168.3.10
 
 #Estos estan usados por el liceo: ===========================================================================================
 languagepack=" myspell-es libreoffice-l10n-es language-pack-es myspell-es "
@@ -106,7 +107,7 @@ function instalarapps {
 
 function xubuntuseed {
     sudo apt-get purge -y abiword gnumeric xchat pidgin gimp
-    wget http://192.168.2.2/netinstall/skel.tar -O /tmp/skel.tar
+    wget http://$httpserver/netinstall/skel.tar -O /tmp/skel.tar
     sudo tar -xvpf /tmp/skel.tar -C /
 }
 
