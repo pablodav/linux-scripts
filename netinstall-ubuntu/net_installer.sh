@@ -16,11 +16,13 @@
 #Para hacer las cosas más fáciles voy a precisar reemplazar la dirección ip del servidor en el futuro de forma automática,
 #En este ejemplo se usará siempre 192.168.3.10 como ip de servidor tftp, nfs, dhcp, http con mirror. 
 
-debrequirements=" dhcp3-server debmirror tftpd-hpa git nfs-kernel-server nginx "
+debrequirements=" isc-dhcp-server debmirror tftpd-hpa git nfs-kernel-server nginx "
 TFTPIPADDRESS=""
 DHCPDNSSERVERS=""
 dhcpconfigfile=/etc/dhcp/dhcpd.conf
 tftpdir=/var/lib/tftpboot/
+nginxcfg=/etc/nginx/nginx.conf
+backupfile nginxcfg
 
 instalador(){
     if [ -x /usr/bin/apt-get ] ; then 
@@ -62,8 +64,9 @@ cd linux-scripts/netinstall-ubuntu/
 #### Backup - Copy dhcpd.conf
 
 backupfile dhcpconfigfile
-cp dhcp3/dhcpd.conf /etc/dhcp/dhcpd.conf
-
+sudo cp -f dhcp3/dhcpd.conf /etc/dhcp/dhcpd.conf
+sudo cp -f etc/dhcp3/dhcpd.conf /etc/dhcp/dhcpd.conf
+sudo service isc-dhcp-server restart
 
 # Configurar tftpd  y archivos tftpd
 # ------------
@@ -90,16 +93,20 @@ sudo rsync -rh --force --chown=root:nogroup var/lib/tftpboot/ubuntu-installer/i3
 # Configurar debmirror
 # ---------
 ### Copiar archivo
+sudo cp -f debmirror/usr/local/bin/mirrorbuild.sh /usr/local/bin/
 
 ### Programar cron
-
+#!!!!Falta esto
 
 # Configurar servidor web
 # ----------
 
 ### Copiar archivo etc
+backupfile nginxcfg
 
 ### Copiar archivos en html 
+sudo rsync -rh --force --chown=root:nogroup html/netinstall /usr/share/nginx/html/
+
 
 # Files to change if ip address changes
 # --------------
