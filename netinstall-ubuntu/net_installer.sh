@@ -41,7 +41,10 @@ install_requirements(){
 
 backupfile(){
     file=${!1}
-    sudo cp $file $file.bak
+    echo -e "backup file $file in /tmp"
+    #changed to backup on /tmp dir because we found problems with duplicated config for ngix if we backup on same folder
+    #as sites enabled
+    sudo cp $file /tmp/$file.bak
 }
     
 last_message(){
@@ -93,10 +96,12 @@ sudo cp -f debmirror/usr/local/bin/mirrorbuild.sh /usr/local/bin/
 # ----------
 ### Copiar archivo etc
 backupfile nginxcfg
-sudo cp etc/nginx/sites-enabled/default $nginxcfg
+sudo cp -f etc/nginx/sites-enabled/default $nginxcfg
 ### Copiar archivos en html 
 sudo rsync -rh --force --chown=root:nogroup html/netinstall /usr/share/nginx/html/
-
+sudo ln -s /home/UbuntuMirror/ /usr/share/nginx/html/ubuntu 
+#Restart nginx
+sudo service nginx restart
 
 # Files to change if ip address changes
 # --------------
