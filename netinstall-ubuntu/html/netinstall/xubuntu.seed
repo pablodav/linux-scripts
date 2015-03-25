@@ -76,8 +76,8 @@ d-i mirror/http/proxy string
 #d-i mirror/suite string trusty;
 
 # To create a normal user account.
-d-i passwd/user-fullname string admin
-d-i passwd/username string admin
+d-i passwd/user-fullname string administradornet
+d-i passwd/username string administradornet
 
 # Normal user's password, either in clear text
 di- passwd/user-password password password2015
