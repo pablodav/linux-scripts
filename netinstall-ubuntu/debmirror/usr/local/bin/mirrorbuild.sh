@@ -26,7 +26,7 @@ section=main,restricted,universe,multiverse,main/debian-installer
 #
 # I have remmoved trusty-updates because it didn't work when I tried to test it. 24/04/2014 pablodav.
 
-release=trusty,trusty-security,trusty-updates
+release=trusty,trusty-security,trusty-updates,vivid,vivid-security,vivid-updates
 
 # Server=	-h	# Server name, minus the protocol and the path at the end
 # CHANGE "*" to equal the mirror you want to create your mirror from. au. in Australia  ca. in Canada.

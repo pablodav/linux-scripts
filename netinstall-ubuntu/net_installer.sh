@@ -96,7 +96,7 @@ sudo rsync -rh --force --chown=root:nogroup var/lib/tftpboot/ubuntu-installer/i3
 sudo cp -f debmirror/usr/local/bin/mirrorbuild.sh /usr/local/bin/
 
 ### Programar cron
-#!!!!Falta esto
+sudo cp -f etc/cron.d/mirrorbuild /etc/cron.d/mirrorbuild
 
 # Configurar servidor web
 # ----------
