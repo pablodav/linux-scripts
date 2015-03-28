@@ -52,18 +52,21 @@ outPath=/home/UbuntuMirror
 # The --progress option shows files as they are downloaded
 # --source \ in the place of --no-source \ if you want sources also.
 # --nocleanup  Do not clean up the local mirror after mirroring is complete. Use this option to keep older repository
+# --postcleanup cleans mirror only if it succeed with no error
 # Start script
 #
 debmirror	-a $arch \
-		--no-source \
 		-s $section \
 		-h $server \
 		-d $release \
 		-r $inPath \
 		--progress \
 		--method=$proto \
+		--nosource \
+		--postcleanup \
 		$outPath
 
+		
 
 #### End script to automate building of Ubuntu mirror ####
 
