@@ -99,6 +99,7 @@ backupfile nginxcfg
 sudo cp -f etc/nginx/sites-enabled/default $nginxcfg
 ### Copiar archivos en html 
 sudo rsync -rh --force --chown=root:nogroup html/netinstall /usr/share/nginx/html/
+sudo mkdir /home/UbuntuMirror
 sudo ln -s /home/UbuntuMirror/ /usr/share/nginx/html/ubuntu 
 #Restart nginx
 sudo service nginx restart
