@@ -11,6 +11,7 @@
 codename=`cat /etc/lsb-release | grep CODENAME | cut -d = -f 2`
 fecha=`date +%F`
 serialnumber=`sudo sh -c 'dmidecode -s system-serial-number'`
+hypervisor=`dmesg --notime | grep -i hypervisor | cut -d ':' -f2 | tr -d " \t\n\r"`
 httpserver=192.168.3.10
 
 #Estos estan usados por el liceo: ===========================================================================================
@@ -29,6 +30,7 @@ appsremote=" remmina x2goclient ssh qweborf "
 appsremoteppa=" x2goserver "
 appsextras=" scratch software-center  "
 appsextrasppa=" handbrake everpad "
+appskvmsupport=" xserver-xspice xserver-xorg-video-qxl " 
 #============================================================================================================================
 #It can't be used in preseed as it asks for license:
 othersrestricted=" ubuntu-restricted-extras "
@@ -61,6 +63,8 @@ else
     appsinstall="$appsinstall $otherapps"
 fi
 
+    
+    
 function reportinstalled {
     sudo tar -cf /tmp/$HOSTNAME_$serialnumber_$fecha.tar /var/log/installer
     
@@ -103,9 +107,14 @@ function instalarapps {
     instalador appsgraphics
     instalador appschildrens
     instalador appstools
+    #Add spice packages to virtual machines running on kvm: 
+    if [[ "$hypervisor" == 'KVM' ]] ; then 
+        instalador appskvmsupport
+    fi
 }
 
 function xubuntuseed {
+    # Esto es para agregar cambios personalizados a la configuración por defecto del escritorio xubuntu
     sudo apt-get purge -y abiword gnumeric xchat pidgin gimp
     wget http://$httpserver/netinstall/skel.tar -O /tmp/skel.tar
     sudo tar -xvpf /tmp/skel.tar -C /
