@@ -13,6 +13,7 @@ fecha=`date +%F`
 serialnumber=`sudo sh -c 'dmidecode -s system-serial-number'`
 hypervisor=`dmesg --notime | grep -i hypervisor | cut -d ':' -f2 | tr -d " \t\n\r"`
 httpserver=192.168.3.10
+repo=192.168.3.10
 
 #Estos estan usados por el liceo: ===========================================================================================
 languagepack=" myspell-es libreoffice-l10n-es language-pack-es myspell-es "
@@ -180,7 +181,12 @@ function salida {
     exit 0
 }
  
-
+function localrepo {
+    aptlocalprefs=/etc/apt/local-repo.pref
+    echo "Package: *" > $aptlocalprefs
+    echo 'Pin: origin "$repo"' >> $aptlocalprefs
+    echo "Pin-Priority: 1002" >> $aptlocalprefs
+}
 
 function repotemp {
 sed 's;http://archive.ubuntu.com;http://$repo;g' /etc/apt/sources.list.d/*
@@ -199,6 +205,7 @@ case "$1" in
     ;;
     'autoinstall')
         echo "Se Instalaran los programas  $appsmin $appsinstall $appsremote $appsdevel y todas las configuraciones automáticamente"
+        localrepo 
         instalarapps
         instalardriversprinters
         #Xubuntu seed esta en uso solo en los liceos por ahora
