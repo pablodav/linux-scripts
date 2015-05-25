@@ -220,11 +220,11 @@ def print_text(client, file=None, header=None):
               'phase_date  '.ljust(jt), 'phase_status'.ljust(jt), '\n', file=f)
     if client:
         v = client
-        print(v.rjust(jt), clients_list[v].get('b_number').center(jt),
-              clients_list[v].get('b_date').center(jt),
+        print(v.rjust(jt), str(clients_list[v].get('b_number')).center(jt),
+              str(clients_list[v].get('b_date')).center(jt),
               clients_list[v].get('b_status').center(jt),
               clients_list[v].get('b_type').center(jt),
-              clients_list[v].get('b_time').center(jt),
+              str(clients_list[v].get('b_time')).center(jt),
               clients_list[v].get('exclude').center(jt),
               str(clients_list[v].get('b_phase', '')).ljust(jt),
               str(clients_list[v].get('b_phase_date', '')).ljust(jt),
