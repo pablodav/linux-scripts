@@ -71,7 +71,7 @@ def get_time_stamp(client_path):
 
 
 def get_client_working_status(client_path):
-    burp_phases = ('phase1', 'phase2')
+    burp_phases = ('phase3', 'phase2', 'phase1')
     burp_phase_dict = {}
     burp_phase = None
     burp_phase_date = None
@@ -82,12 +82,15 @@ def get_client_working_status(client_path):
             burp_phase = burp_phases[i]
             burp_phase_date = get_file_m_date(phase_file)
             burp_phase_status = date_check_status(burp_phase_date)
+            burp_phase_dict.setdefault('b_phase', burp_phase)
+            burp_phase_dict.setdefault('b_phase_date', burp_phase_date)
+            burp_phase_dict.setdefault('b_phase_status', burp_phase_status)
+            return burp_phase_dict
         else:
             burp_phase = 'working unknown'
     burp_phase_dict.setdefault('b_phase', burp_phase)
-    burp_phase_dict.setdefault('b_phase_date', burp_phase_date)
-    burp_phase_dict.setdefault('b_phase_status', burp_phase_status)
     return burp_phase_dict
+
 
 
 def burp_client_status():
@@ -127,6 +130,8 @@ def burp_client_status():
         b_phase = None
         b_phase_date = None
         b_phase_status = None
+        b_log_date = None
+        b_log_status = None
         # Ignore incexc folder and profiles
         if (client == 'incexc') or (client == 'profiles'):
             continue
@@ -146,6 +151,9 @@ def burp_client_status():
                 b_time = timestamp[3]
                 b_status = date_check_status(b_date)
                 b_number = timestamp[1]
+            if os.path.isfile(os.path.join(client_path, 'current', 'log.gz')):
+                b_log_date = get_file_m_date(os.path.join(client_path, 'current', 'log.gz'))
+                b_log_status = date_check_status(b_log_date)
         else:
             b_number = "none"
             b_date = "none"
@@ -167,6 +175,8 @@ def burp_client_status():
         l_clients_list.setdefault(client, {})['b_phase'] = b_phase
         l_clients_list.setdefault(client, {})['b_phase_date'] = b_phase_date
         l_clients_list.setdefault(client, {})['b_phase_status'] = b_phase_status
+        l_clients_list.setdefault(client, {})['b_log_date'] = b_log_date
+        l_clients_list.setdefault(client, {})['b_log_status'] = b_log_status
     return l_clients_list
 
 
@@ -217,7 +227,8 @@ def print_text(client, file=None, header=None):
         print('\n burp report'.ljust(jt*9), str(datetime.now().strftime('%Y-%m-%d %H:%M:%S')), '\n', file=f)
         print('Clients:'.center(jt), 'b_number'.center(jt), 'back_date'.center(jt), 'b_status'.center(jt),
               'b_type'.center(jt), 'b_time'.center(jt), 'exclude'.center(jt), 'phase'.ljust(jt),
-              'phase_date  '.ljust(jt), 'phase_status'.ljust(jt), '\n', file=f)
+              'phase_date  '.ljust(jt), 'phase_status'.ljust(jt), 'curr_log'.ljust(jt),
+              'log_status'.ljust(jt), '\n', file=f)
     if client:
         v = client
         print(v.rjust(jt), str(clients_list[v].get('b_number')).center(jt),
@@ -228,7 +239,9 @@ def print_text(client, file=None, header=None):
               clients_list[v].get('exclude').center(jt),
               str(clients_list[v].get('b_phase', '')).ljust(jt),
               str(clients_list[v].get('b_phase_date', '')).ljust(jt),
-              '', str(clients_list[v].get('b_phase_status', '')).ljust(jt), file=f
+              '', str(clients_list[v].get('b_phase_status', '')).ljust(jt),
+              str(clients_list[v].get('b_log_date', '')).ljust(jt),
+              str(clients_list[v].get('b_log_status', '')).ljust(jt), file=f
               )
 
 
@@ -328,7 +341,7 @@ def reports_config_global(burp_custom=None, example=None):
     global csv_file_data
     global json_clients_status
     global burp_www_reports
-    # Global to parse to help TODO:change it to return
+    # Global to parse to help TODO:change it to return and modify all to use classes when learned :)
     global burp_custom_file
     if not burp_custom:
         burp_custom_file = os.path.join(os.sep, 'etc', 'burp', 'burp-custom-reports.conf')
