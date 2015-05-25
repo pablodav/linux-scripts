@@ -235,6 +235,10 @@ def print_text(client, file=None, header=None):
 def load_csv_data(csv_filename=None):
     if not csv_filename:
         csv_filename = csv_file_data
+    if os.path.isfile(csv_filename):
+        print('Loading', csv_filename, 'and ignoring first row')
+    else:
+        return str('we could not read the source csv:', csv_filename)
     csv_rows = []
     csv_file_obj = open(csv_filename)
     reader_obj = csv.reader(csv_file_obj, delimiter=';')
@@ -464,11 +468,11 @@ def parser_commandline():
     parser.add_argument('--export_json', nargs='?', const='df', help='export clients_list to file')
     parser.add_argument('--print_usage', nargs='?', default=None, const='Print', help='print usage')
     args = parser.parse_args()
-    if args.burp_conf:
+    if args.burp_conf:  #Always load some config with or without --burp_conf
         burp_config_global(args.burp_conf)
     else:
         burp_config_global()
-    if args.reports_conf:
+    if args.reports_conf:  #Always set reports config with or without --reports_conf
         reports_config_global(args.reports_conf)
     else:
         reports_config_global()
