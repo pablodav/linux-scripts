@@ -92,7 +92,6 @@ def get_client_working_status(client_path):
     return burp_phase_dict
 
 
-
 def burp_client_status():
     """
     Format that will be used:
@@ -288,7 +287,7 @@ def inventory_compare(csv_filename=None):
         client, status, det_status = inventory[i][0:3]
         if client in clients_list:
             if det_status.lower() == 'spare':
-                inv_status = 'ignored spare'
+                inv_status = 'wrong spare in burp'
             elif status.lower() != 'active':
                 inv_status = 'wrong not active'
             else:
@@ -313,7 +312,7 @@ def inventory_compare(csv_filename=None):
 def parse_config(filename):
     options = {}
     comment_char = '#'
-    option_char =  '='
+    option_char = '='
     f = open(filename)
     for line in f:
         # First, remove comments:
@@ -382,7 +381,7 @@ def reports_config_global(burp_custom=None, example=None):
               '\n        burp_www_reports =', burp_www_reports,
               '\n        # burp_www_reports, is output place for example files:',
               '\n            #', csv_file_data_export, txt_clients_status,
-              '\n        json_clients_file =', json_clients_status )
+              '\n        json_clients_file =', json_clients_status)
 
 
 def burp_config_global(burp_conf=None):
@@ -472,7 +471,7 @@ def parser_commandline():
     compare_result = []
     parser = argparse.ArgumentParser()
     parser.add_argument('--burp_conf', nargs='?', help='burp-server.conf file')
-    parser.add_argument('--reports_conf', nargs='?',help='burp-custom-server.conf file')
+    parser.add_argument('--reports_conf', nargs='?', help='burp-custom-server.conf file')
     parser.add_argument('--import_json', nargs='?', help='clients_status.json file')
     parser.add_argument('--outdated', '-o', nargs='?', const='print', help='Report outdated or --outdated=file')
     parser.add_argument('--text', '-t', nargs='?', const='df', help='Report to default text file or --text=file')
@@ -481,11 +480,11 @@ def parser_commandline():
     parser.add_argument('--export_json', nargs='?', const='df', help='export clients_list to file')
     parser.add_argument('--print_usage', nargs='?', default=None, const='Print', help='print usage')
     args = parser.parse_args()
-    if args.burp_conf:  #Always load some config with or without --burp_conf
+    if args.burp_conf:  # Always load some config with or without --burp_conf
         burp_config_global(args.burp_conf)
     else:
         burp_config_global()
-    if args.reports_conf:  #Always set reports config with or without --reports_conf
+    if args.reports_conf:  # Always set reports config with or without --reports_conf
         reports_config_global(args.reports_conf)
     else:
         reports_config_global()
