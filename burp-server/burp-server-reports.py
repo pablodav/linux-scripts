@@ -154,13 +154,14 @@ def burp_client_status():
                 b_log_date = get_file_m_date(os.path.join(client_path, 'current', 'log.gz'))
                 b_log_status = date_check_status(b_log_date)
         else:
+            # If there is no client folder in storage backup
             b_number = "none"
             b_date = "none"
             client_conf_dir = os.path.join(burp_client_confdir, client)
             file_time = get_file_m_date(client_conf_dir)
             file_status = date_check_status(file_time)
             if file_status == 'ok':
-                b_status = 'ok'
+                b_status = 'new'
                 b_type = 'not started'
             else:
                 b_status = 'UNKNOWN'
@@ -179,33 +180,37 @@ def burp_client_status():
     return l_clients_list
 
 
-def report_outdated(file=None):
+def report_outdated(file=None, detail=None):
     if file == 'print':
         file = None
+    if detail:
+        detail = True
     print('reporting outdated for clients_list: \n', file)
-    print_text(client=None, file=file, header=True)
+    print_text(client=None, file=file, header=True, detail=detail)
     for v in sorted(clients_list.keys()):
         if clients_list[v]['b_status'] != 'ok':
             client = v
-            print_text(client, file)
+            print_text(client, file, detail=detail)
     if file:
         if os.path.isfile(file):
             print('exported to', file)
 
 
-def report_to_txt(file=None):
+def report_to_txt(file=None, detail=None):
     if not file:
         file = txt_clients_status
-    print_text(client=None, file=file, header=True)
+    if detail:
+        detail = True
+    print_text(client=None, file=file, header=True, detail=detail)
     for k, v in sorted(clients_list.items()):
         client = k
-        print_text(client, file)
+        print_text(client, file, detail=detail)
     if file:
         if os.path.isfile(file):
             print('exported to', file)
 
 
-def print_text(client, file=None, header=None):
+def print_text(client, file=None, header=None, detail=None):
     """
     print only header once with client=None, header=True
     header to file:
@@ -224,24 +229,37 @@ def print_text(client, file=None, header=None):
             f = open(file, 'a')
     if header:
         print('\n burp report'.ljust(jt*9), str(datetime.now().strftime('%Y-%m-%d %H:%M:%S')), '\n', file=f)
-        print('Clients:'.center(jt), 'b_number'.center(jt), 'back_date'.center(jt), 'b_status'.center(jt),
-              'b_type'.center(jt), 'b_time'.center(jt), 'exclude'.center(jt), 'phase'.ljust(jt),
-              'phase_date  '.ljust(jt), 'phase_status'.ljust(jt), 'curr_log'.ljust(jt),
-              'log_status'.ljust(jt), '\n', file=f)
+        if detail:
+            print('clients'.rjust(jt), 'b_number'.center(jt), 'back_date'.center(jt), 'b_status'.center(jt),
+                  'b_type'.center(jt), 'b_time'.center(jt), 'exclude'.center(jt), 'phase'.ljust(jt),
+                  'phase_date  '.ljust(jt), 'phase_status'.ljust(jt), 'curr_log'.ljust(jt),
+                  'log_status'.ljust(jt), '\n', file=f)
+        else:
+            print('Clients'.rjust(jt+jt+jt), 'Number'.center(jt), 'Date'.center(jt), 'Time'.center(jt),
+                  'Type'.center(jt), 'Status'.center(jt), file=f)
     if client:
         v = client
-        print(v.rjust(jt), str(clients_list[v].get('b_number')).center(jt),
-              str(clients_list[v].get('b_date')).center(jt),
-              clients_list[v].get('b_status').center(jt),
-              clients_list[v].get('b_type').center(jt),
-              str(clients_list[v].get('b_time')).center(jt),
-              clients_list[v].get('exclude').center(jt),
-              str(clients_list[v].get('b_phase', '')).ljust(jt),
-              str(clients_list[v].get('b_phase_date', '')).ljust(jt),
-              '', str(clients_list[v].get('b_phase_status', '')).ljust(jt),
-              str(clients_list[v].get('b_log_date', '')).ljust(jt),
-              str(clients_list[v].get('b_log_status', '')).ljust(jt), file=f
-              )
+        if detail:
+            print(v.rjust(jt), str(clients_list[v].get('b_number')).center(jt),
+                  str(clients_list[v].get('b_date')).center(jt),
+                  clients_list[v].get('b_status').center(jt),
+                  clients_list[v].get('b_type').center(jt),
+                  str(clients_list[v].get('b_time')).center(jt),
+                  clients_list[v].get('exclude').center(jt),
+                  str(clients_list[v].get('b_phase', '')).ljust(jt),
+                  str(clients_list[v].get('b_phase_date', '')).ljust(jt),
+                  '', str(clients_list[v].get('b_phase_status', '')).ljust(jt),
+                  str(clients_list[v].get('b_log_date', '')).ljust(jt),
+                  str(clients_list[v].get('b_log_status', '')).ljust(jt), file=f
+                  )
+        else:
+            print(v.rjust(jt+jt+jt), str(clients_list[v].get('b_number')).center(jt),
+                  str(clients_list[v].get('b_date')).center(jt),
+                  clients_list[v].get('b_status').center(jt),
+                  clients_list[v].get('b_type').center(jt),
+                  str(clients_list[v].get('b_time')).center(jt),
+                  file=f
+                  )
 
 
 def load_csv_data(csv_filename=None):
@@ -466,42 +484,50 @@ def print_usage():
 
 
 def parser_commandline():
+    """
+    Information extracted from: https://mkaz.com/2014/07/26/python-argparse-cookbook/
+    :return:
+    """
     import argparse
     global clients_list
     compare_result = []
     parser = argparse.ArgumentParser()
-    parser.add_argument('--burp_conf', nargs='?', help='burp-server.conf file')
-    parser.add_argument('--reports_conf', nargs='?', help='burp-custom-server.conf file')
-    parser.add_argument('--import_json', nargs='?', help='clients_status.json file')
-    parser.add_argument('--outdated', '-o', nargs='?', const='print', help='Report outdated or --outdated=file')
-    parser.add_argument('--text', '-t', nargs='?', const='df', help='Report to default text file or --text=file')
+    parser.add_argument('--burp_conf', nargs='?', const=os.path.join(os.sep, 'etc', 'burp', 'burp-server.conf'),
+                        help='burp-server.conf file')
+    parser.add_argument('--reports_conf', const=os.path.join(os.sep, 'etc', 'burp', 'burp-custom-reports.conf'),
+                        nargs='?', help='burp-custom-server.conf file')
+    parser.add_argument('--import_json', nargs='?',
+                        help='clients_status.json file')
+    parser.add_argument('--outdated', '-o', nargs='?', const='print',
+                        help='Report outdated or --outdated=file')
+    parser.add_argument('--text', '-t', nargs='?', const='df',
+                        help='Report to default text file or --text=file')
+    parser.add_argument('--detail', default=False, action='store_true',
+                        help='Report details on text reports')
     parser.add_argument('--compare', '-co', nargs='?', const='df', help='Compare inventory --compare=file')
     parser.add_argument('--csv_output', nargs='?', const='df', help='export compare to --csv_output=file')
     parser.add_argument('--export_json', nargs='?', const='df', help='export clients_list to file')
     parser.add_argument('--print_usage', nargs='?', default=None, const='Print', help='print usage')
     args = parser.parse_args()
-    if args.burp_conf:  # Always load some config with or without --burp_conf
-        burp_config_global(args.burp_conf)
-    else:
-        burp_config_global()
-    if args.reports_conf:  # Always set reports config with or without --reports_conf
-        reports_config_global(args.reports_conf)
-    else:
-        reports_config_global()
+    # Always load some config with or without --burp_conf
+    burp_config_global(burp_conf=args.burp_conf)
+    # Always set reports config with or without --reports_conf
+    reports_config_global(burp_custom=args.reports_conf)
+    # Configure options:
     if args.import_json:
         clients_list = import_json(args.import_json)
     else:
         clients_list = burp_client_status()
     if args.outdated:
         if args.outdated == 'print':
-            report_outdated()
+            report_outdated(detail=args.detail)
         else:
-            report_outdated(args.outdated)
+            report_outdated(args.outdated, detail=args.detail)
     if args.text:
         if args.text == 'df':
-            report_to_txt()
+            report_to_txt(detail=args.detail)
         else:
-            report_to_txt(args.text)
+            report_to_txt(args.text, detail=args.detail)
     if args.compare:
         if args.compare == 'df':
             compare_result = inventory_compare()
