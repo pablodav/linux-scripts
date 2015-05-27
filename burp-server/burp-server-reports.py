@@ -230,21 +230,21 @@ def print_text(client, file=None, header=None, detail=None):
     if header:
         print('\n burp report'.ljust(jt*9), str(datetime.now().strftime('%Y-%m-%d %H:%M:%S')), '\n', file=f)
         if detail:
-            print('clients'.rjust(jt), 'b_number'.center(jt), 'back_date'.center(jt), 'b_status'.center(jt),
-                  'b_type'.center(jt), 'b_time'.center(jt), 'exclude'.center(jt), 'phase'.ljust(jt),
+            print('clients'.rjust(jt), 'b_number'.center(jt), 'back_date'.center(jt), 'b_time'.center(jt),
+                  'b_status'.center(jt), 'b_type'.center(jt), 'exclude'.center(jt), 'phase'.ljust(jt),
                   'phase_date  '.ljust(jt), 'phase_status'.ljust(jt), 'curr_log'.ljust(jt),
                   'log_status'.ljust(jt), '\n', file=f)
         else:
             print('Clients'.rjust(jt+jt+jt), 'Number'.center(jt), 'Date'.center(jt), 'Time'.center(jt),
-                  'Type'.center(jt), 'Status'.center(jt), file=f)
+                  'Type'.center(jt), 'Status'.center(jt), '\n', file=f)
     if client:
         v = client
         if detail:
             print(v.rjust(jt), str(clients_list[v].get('b_number')).center(jt),
                   str(clients_list[v].get('b_date')).center(jt),
+                  str(clients_list[v].get('b_time')).center(jt),
                   clients_list[v].get('b_status').center(jt),
                   clients_list[v].get('b_type').center(jt),
-                  str(clients_list[v].get('b_time')).center(jt),
                   clients_list[v].get('exclude').center(jt),
                   str(clients_list[v].get('b_phase', '')).ljust(jt),
                   str(clients_list[v].get('b_phase_date', '')).ljust(jt),
@@ -255,9 +255,9 @@ def print_text(client, file=None, header=None, detail=None):
         else:
             print(v.rjust(jt+jt+jt), str(clients_list[v].get('b_number')).center(jt),
                   str(clients_list[v].get('b_date')).center(jt),
-                  clients_list[v].get('b_status').center(jt),
-                  clients_list[v].get('b_type').center(jt),
                   str(clients_list[v].get('b_time')).center(jt),
+                  clients_list[v].get('b_type').center(jt),
+                  clients_list[v].get('b_status').center(jt),
                   file=f
                   )
 
