@@ -102,16 +102,20 @@ def burp_client_status():
           'b_type'    : 'finishing/working/current',
           'quota'   : 'ok/soft/hard',
           'warnings': 'warnings',
-          'exclude' : 'yes/no'
-          'b_phase' : 'phase1/phase2'
-          'b_phase_date' : 'date'
-          'b_phase_status' : 'outdated/ok'
+          'exclude' : 'yes/no',
+          'b_phase' : 'phase1/phase2',
+          'b_phase_date' : 'date',
+          'b_phase_status' : 'outdated/ok',
+          'b_log_date' : 'date of log file',
+          'b_log_status' : 'outdated/ok',
+          'b_curr_taken' : 'seconds'
         }
     }
     :rtype : dict
     """
     burp_clients = []
     l_clients_list = {}
+    stats_dict = {}
     try:
         burp_clients = os.listdir(burp_client_confdir)
     except PermissionError:
@@ -153,10 +157,13 @@ def burp_client_status():
             if os.path.isfile(os.path.join(client_path, 'current', 'log.gz')):
                 b_log_date = get_file_m_date(os.path.join(client_path, 'current', 'log.gz'))
                 b_log_status = date_check_status(b_log_date)
+            if os.path.isfile(os.path.join(client_path, 'current', 'backup_stats')):
+                stats_file = os.path.join(client_path, 'current', 'backup_stats')
+                stats_dict = parse_config(filename=stats_file, stats=True)
         else:
             # If there is no client folder in storage backup
-            b_number = "none"
-            b_date = "none"
+            b_number = "None"
+            b_date = "None"
             client_conf_dir = os.path.join(burp_client_confdir, client)
             file_time = get_file_m_date(client_conf_dir)
             file_status = date_check_status(file_time)
@@ -177,6 +184,7 @@ def burp_client_status():
         l_clients_list.setdefault(client, {})['b_phase_status'] = b_phase_status
         l_clients_list.setdefault(client, {})['b_log_date'] = b_log_date
         l_clients_list.setdefault(client, {})['b_log_status'] = b_log_status
+        l_clients_list[client].update({'backup_stats': stats_dict})
     return l_clients_list
 
 
@@ -197,20 +205,27 @@ def report_outdated(file=None, detail=None):
 
 
 def report_to_txt(file=None, detail=None):
-    if not file:
+    if not file or file == 'default':
         file = txt_clients_status
     if detail:
         detail = True
+    total_taken = 0
     print_text(client=None, file=file, header=True, detail=detail)
     for k, v in sorted(clients_list.items()):
         client = k
         print_text(client, file, detail=detail)
+        if detail:
+            total_taken = total_taken + int(clients_list.get(k).get('backup_stats').get('time_taken'))
+    if detail:
+        s = total_taken
+        foot_notes = str('total time backups taken: {:02}:{:02}:{:02}'.format(s//3600, s%3600//60, s%60))
+        print_text(client=None, file=file, footer=foot_notes, detail=detail)
     if file:
         if os.path.isfile(file):
             print('exported to', file)
 
 
-def print_text(client, file=None, header=None, detail=None):
+def print_text(client, file=None, header=None, footer=None, detail=None):
     """
     print only header once with client=None, header=True
     header to file:
@@ -219,6 +234,7 @@ def print_text(client, file=None, header=None, detail=None):
     :param client: dict with clients (check burp_client_status())
     :param file: output file
     :param header: print header
+    :param detail: adds detailed print of clients
     """
     jt = 11
     f = None
@@ -233,13 +249,15 @@ def print_text(client, file=None, header=None, detail=None):
             print('clients'.rjust(jt), 'b_number'.center(jt), 'back_date'.center(jt), 'b_time'.center(jt),
                   'b_status'.center(jt), 'b_type'.center(jt), 'exclude'.center(jt), 'phase'.ljust(jt),
                   'phase_date  '.ljust(jt), 'phase_status'.ljust(jt), 'curr_log'.ljust(jt),
-                  'log_status'.ljust(jt), '\n', file=f)
+                  'log_status'.ljust(jt), 'time_taken', '\n', file=f)
         else:
             print('Clients'.rjust(jt+jt+jt), 'Number'.center(jt), 'Date'.center(jt), 'Time'.center(jt),
                   'Type'.center(jt), 'Status'.center(jt), '\n', file=f)
     if client:
         v = client
         if detail:
+            s = int(clients_list[v].get('backup_stats').get('time_taken'))
+            time_taken = str('{:02}:{:02}:{:02}'.format(s//3600, s%3600//60, s%60))
             print(v.rjust(jt), str(clients_list[v].get('b_number')).center(jt),
                   str(clients_list[v].get('b_date')).center(jt),
                   str(clients_list[v].get('b_time')).center(jt),
@@ -250,7 +268,9 @@ def print_text(client, file=None, header=None, detail=None):
                   str(clients_list[v].get('b_phase_date', '')).ljust(jt),
                   '', str(clients_list[v].get('b_phase_status', '')).ljust(jt),
                   str(clients_list[v].get('b_log_date', '')).ljust(jt),
-                  str(clients_list[v].get('b_log_status', '')).ljust(jt), file=f
+                  str(clients_list[v].get('b_log_status', '')).ljust(jt),
+                  str(time_taken).ljust(jt),
+                  file=f
                   )
         else:
             print(v.rjust(jt+jt+jt), str(clients_list[v].get('b_number')).center(jt),
@@ -260,6 +280,12 @@ def print_text(client, file=None, header=None, detail=None):
                   clients_list[v].get('b_status').center(jt),
                   file=f
                   )
+    if footer:
+         if detail:
+            print('\n\n'.rjust(jt), ''.center(jt), ''.center(jt), ''.center(jt),
+                  ''.center(jt), ''.center(jt), ''.center(jt), ''.ljust(jt),
+                  '  '.ljust(jt), ''.ljust(jt), ''.ljust(jt),
+                  footer.ljust(jt), '\n', file=f)
 
 
 def load_csv_data(csv_filename=None):
@@ -327,10 +353,17 @@ def inventory_compare(csv_filename=None):
 # TODO: def send_emails():
 
 
-def parse_config(filename):
+def parse_config(filename, stats=None):
+    """
+
+    :param filename: file name to parse config
+    :param stats: only use it to stats file with separator :
+    :return: dict with options
+    """
     options = {}
     comment_char = '#'
     option_char = '='
+    stats_char = ':'
     f = open(filename)
     for line in f:
         # First, remove comments:
@@ -338,9 +371,14 @@ def parse_config(filename):
             # split on comment char, keep only the part before
             line, comment = line.split(comment_char, 1)
         # Second, find lines with an option=value:
-        if option_char in line:
+        if option_char in line and not stats:
             # split on option char:
             option, value = line.split(option_char, 1)
+        elif stats_char in line and stats:
+            option, value = line.split(stats_char, 1)
+        else:
+            continue
+        if option and value:
             # strip spaces:
             option = option.strip()
             value = value.strip()
@@ -500,7 +538,7 @@ def parser_commandline():
                         help='clients_status.json file')
     parser.add_argument('--outdated', '-o', nargs='?', const='print',
                         help='Report outdated or --outdated=file')
-    parser.add_argument('--text', '-t', nargs='?', const='df',
+    parser.add_argument('--text', '-t', nargs='?', const='default',
                         help='Report to default text file or --text=file')
     parser.add_argument('--detail', default=False, action='store_true',
                         help='Report details on text reports')
@@ -519,15 +557,9 @@ def parser_commandline():
     else:
         clients_list = burp_client_status()
     if args.outdated:
-        if args.outdated == 'print':
-            report_outdated(detail=args.detail)
-        else:
-            report_outdated(args.outdated, detail=args.detail)
+        report_outdated(file=args.outdated, detail=args.detail)
     if args.text:
-        if args.text == 'df':
-            report_to_txt(detail=args.detail)
-        else:
-            report_to_txt(args.text, detail=args.detail)
+        report_to_txt(file=args.text, detail=args.detail)
     if args.compare:
         if args.compare == 'df':
             compare_result = inventory_compare()
