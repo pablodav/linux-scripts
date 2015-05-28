@@ -326,7 +326,7 @@ def inventory_compare(csv_filename=None):
         inventory = load_csv_data()
     else:
         inventory = load_csv_data(csv_filename)
-    csv_rows_inventory_status = []
+    csv_rows_inventory_status = [['client', 'status', 'inv_status', 'sub_status']]
     for i in range(len(inventory)):
         client, status, det_status = inventory[i][0:3]
         if client in clients_list:
