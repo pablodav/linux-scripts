@@ -215,7 +215,7 @@ def report_to_txt(file=None, detail=None):
         client = k
         print_text(client, file, detail=detail)
         if detail:
-            total_taken = total_taken + int(clients_list.get(k).get('backup_stats').get('time_taken'))
+            total_taken = total_taken + int(clients_list.get(k).get('backup_stats', 0).get('time_taken', 0))
     if detail:
         s = total_taken
         foot_notes = str('total time backups taken: {:02}:{:02}:{:02}'.format(s//3600, s%3600//60, s%60))
@@ -256,7 +256,7 @@ def print_text(client, file=None, header=None, footer=None, detail=None):
     if client:
         v = client
         if detail:
-            s = int(clients_list[v].get('backup_stats').get('time_taken'))
+            s = int(clients_list[v].get('backup_stats', 0).get('time_taken', 0))
             time_taken = str('{:02}:{:02}:{:02}'.format(s//3600, s%3600//60, s%60))
             print(v.rjust(jt), str(clients_list[v].get('b_number')).center(jt),
                   str(clients_list[v].get('b_date')).center(jt),
@@ -306,7 +306,7 @@ def load_csv_data(csv_filename=None):
 
 
 def save_csv_data(csv_rows=None, csv_filename=None):
-    if not csv_filename:
+    if not csv_filename or csv_filename == "default":
         csv_filename = csv_file_data_export
     if not csv_rows:
         return 'There are no csv rows to write'
@@ -322,26 +322,29 @@ def save_csv_data(csv_rows=None, csv_filename=None):
 
 
 def inventory_compare(csv_filename=None):
-    if not csv_filename:
+    import socket
+    server_name = socket.gethostname()
+    if not csv_filename or csv_filename == "default":
         inventory = load_csv_data()
     else:
         inventory = load_csv_data(csv_filename)
-    csv_rows_inventory_status = [['client', 'status', 'inv_status', 'sub_status']]
+    csv_rows_inventory_status = [['client', 'status', 'server' 'inv_status', 'sub_status']]
     for i in range(len(inventory)):
         client, status, det_status = inventory[i][0:3]
         if client in clients_list:
             if det_status.lower() == 'spare':
-                inv_status = 'wrong spare in burp'
+                burp_status = 'wrong spare in burp'
             elif status.lower() != 'active':
-                inv_status = 'wrong not active'
+                burp_status = 'wrong not active'
             else:
-                inv_status = clients_list[client]['b_status']
+                burp_status = clients_list[client]['b_status']
         elif det_status.lower() == 'spare':
-            inv_status = 'ignored spare'
+            burp_status = 'ignored spare'
         else:
-            inv_status = 'absent'
+            burp_status = 'absent'
         row = inventory[i]
-        row.insert(1, inv_status)
+        row.insert(1, burp_status)
+        row.insert(2, server_name)
         csv_rows_inventory_status.append(row)
     return csv_rows_inventory_status
 
@@ -460,7 +463,7 @@ def burp_config_global(burp_conf=None):
 
 
 def export_json(file=None):
-    if not file:
+    if not file or file == "default":
         file = json_clients_status
     with open(file, 'w') as fp:
         json.dump(clients_list, fp)
@@ -542,9 +545,12 @@ def parser_commandline():
                         help='Report to default text file or --text=file')
     parser.add_argument('--detail', default=False, action='store_true',
                         help='Report details on text reports')
-    parser.add_argument('--compare', '-co', nargs='?', const='df', help='Compare inventory --compare=file')
-    parser.add_argument('--csv_output', nargs='?', const='df', help='export compare to --csv_output=file')
-    parser.add_argument('--export_json', nargs='?', const='df', help='export clients_list to file')
+    parser.add_argument('--compare', '-co', nargs='?', default=None, const='default',
+                        help='Compare inventory --compare=file')
+    parser.add_argument('--csv_output', nargs='?', default=None, const='default',
+                        help='export compare to --csv_output=file')
+    parser.add_argument('--export_json', nargs='?', default=None, const='default',
+                        help='export clients_list to file')
     parser.add_argument('--print_usage', nargs='?', default=None, const='Print', help='print usage')
     args = parser.parse_args()
     # Always load some config with or without --burp_conf
@@ -561,20 +567,11 @@ def parser_commandline():
     if args.text:
         report_to_txt(file=args.text, detail=args.detail)
     if args.compare:
-        if args.compare == 'df':
-            compare_result = inventory_compare()
-        else:
-            compare_result = inventory_compare(args.compare)
+        compare_result = inventory_compare(args.compare)
     if args.csv_output:
-        if args.csv_output == 'df':
-            save_csv_data(compare_result)
-        else:
-            save_csv_data(compare_result, args.csv_output)
+        save_csv_data(compare_result, args.csv_output)
     if args.export_json:
-        if args.export_json == 'df':
-            export_json()
-        else:
-            export_json(args.export_json)
+        export_json(args.export_json)
     if args.print_usage == 'Print':
         print_usage()
 
