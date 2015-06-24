@@ -1,1 +1,1 @@
-GROUP;HOSTNAME;IP;TYPE(Change it to SNMP if you want to add SNMP Switch)
+GROUP;HOSTNAME;IP;TYPE;SNMPCOMMUNITY(Change it to SNMP if you want to add SNMP Switch)
