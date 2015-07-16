@@ -57,17 +57,26 @@ def date_check_status(backup_date):
 
 
 def get_time_stamp(client_path):
-    burp_links = ('finishing', 'working', 'current')
+    '''
+
+    :param client_path:
+    :return: reads timestamp file by status, expected file content:
+    0000035 2015-07-16 03:08:08
+    '''
+    burp_links = ('working', 'finishing', 'current')
+    timestamp = ''
     for i in range(len(burp_links)):
         time_stamp_file = os.path.join(client_path, burp_links[i], 'timestamp')
         if os.path.isfile(time_stamp_file):
             timestamps = open(time_stamp_file)
             timestamp = timestamps.read()
             timestamps.close()
-        else:
-            continue
         if timestamp:
             return burp_links[i] + ' ' + timestamp
+        else:
+            continue
+    print('WARNING: client timestamp file ', time_stamp_file,
+          'exit get_time_stamp function without reading timestamp. ', timestamp)
 
 
 def get_client_working_status(client_path):
@@ -155,35 +164,39 @@ def burp_client_status():
         print('Could not list folders in' + burp_client_confdir)
         exit()
     for c in burp_clients:
-        b_status = 0
-        b_date = 0
+        b_status = ''
+        b_date = ''
         b_number = 0
-        b_time = 0
+        b_time = ''
         client = c
-        b_phase = None
-        b_phase_date = None
-        b_phase_status = None
-        b_log_date = None
-        b_log_status = None
+        b_phase = ''
+        b_type = ''
+        b_phase_date = ''
+        b_phase_status = ''
+        b_log_date = ''
+        b_log_status = ''
         # Ignore incexc folder and profiles
         if (client == 'incexc') or (client == 'profiles'):
             continue
         client_path = os.path.join(burp_directory, client)
         if os.path.isdir(client_path):
             timestamp = get_time_stamp(client_path)  # call function to get data from timestamp
-            timestamp = timestamp.split()  # Set list timestamp example:
-            # ['working', '0000008', '2015-05-18', '05:49:01' ]
-            b_type = timestamp[0]
-            if (b_type == 'working') or (b_type == 'current') or (b_type == 'finishing'):
-                if b_type == 'working':
-                    burp_phase_status = get_client_working_status(client_path)  # get client phase
-                    b_phase = burp_phase_status.get('b_phase', '')
-                    b_phase_date = burp_phase_status.get('b_phase_date', '')
-                    b_phase_status = burp_phase_status.get('b_phase_status', '')
-                b_date = timestamp[2]
-                b_time = timestamp[3]
-                b_status = date_check_status(b_date)
-                b_number = timestamp[1]
+            if timestamp:
+                timestamp = timestamp.split()  # Set list timestamp example:
+                # ['working', '0000008', '2015-05-18', '05:49:01' ]
+                b_type = timestamp[0]
+                if (b_type == 'working') or (b_type == 'current') or (b_type == 'finishing'):
+                    if b_type == 'working':
+                        burp_phase_status = get_client_working_status(client_path)  # get client phase
+                        b_phase = burp_phase_status.get('b_phase', '')
+                        b_phase_date = burp_phase_status.get('b_phase_date', '')
+                        b_phase_status = burp_phase_status.get('b_phase_status', '')
+                    b_date = timestamp[2]
+                    b_time = timestamp[3]
+                    b_status = date_check_status(b_date)
+                    b_number = timestamp[1]
+            else:
+                print('WARNING: client', client_path, ' exit without timestamp')
             if os.path.isfile(os.path.join(client_path, 'current', 'log.gz')):
                 b_log_date = get_file_m_date(os.path.join(client_path, 'current', 'log.gz'))
                 b_log_status = date_check_status(b_log_date)
