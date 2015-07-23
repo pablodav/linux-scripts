@@ -80,6 +80,14 @@ def get_time_stamp(client_path):
 
 
 def get_client_working_status(client_path):
+    '''
+    TODO: Document this function
+    burp_phase_dict = {
+    }
+
+    :param client_path:
+    :return: burp_phase_dict
+    '''
     burp_phases = ('phase3', 'phase2', 'phase1')
     burp_phase_dict = {}
     burp_phase = None
@@ -96,13 +104,16 @@ def get_client_working_status(client_path):
             burp_phase_dict.setdefault('b_phase_status', burp_phase_status)
             return burp_phase_dict
         else:
-            burp_phase = 'working unknown'
+            burp_phase = 'unknown'
     burp_phase_dict.setdefault('b_phase', burp_phase)
     return burp_phase_dict
 
 
 def burp_client_status():
     """
+    This is the most important function, it creates a dictionary with the status of all clients and collects
+    many information about them, also collects backup_statistics file and puts it on the dictionary.
+    At the moment it is done for burp 1.x
     Format that will be used:
     clients_list = {'client_name':
         { 'b_number'  : 'number',
@@ -200,6 +211,14 @@ def burp_client_status():
             if os.path.isfile(os.path.join(client_path, 'current', 'log.gz')):
                 b_log_date = get_file_m_date(os.path.join(client_path, 'current', 'log.gz'))
                 b_log_status = date_check_status(b_log_date)
+            working_log = os.path.join(client_path, 'working', 'log')
+            if os.path.isfile(working_log):
+                with open(working_log, 'r') as f:
+                    content = f.read()
+                if 'error in backup phase 2' in content:
+                    b_log_status = 'with err'
+                if 'quota exceeded' in content:
+                    b_log_status = 'quota excee'
             if os.path.isfile(os.path.join(client_path, 'current', 'backup_stats')):
                 stats_file = os.path.join(client_path, 'current', 'backup_stats')
                 stats_dict = parse_config(filename=stats_file, stats=True)
@@ -485,7 +504,7 @@ def reports_config_global(burp_custom=None, example=None):
         # burp automation folder for files in use with list of clients and other with automation tasks.
         # - option: burp_automation_folder = default = /storage/samba/automation
         burp_automation_folder = reports_config.get('burp_automation_folder', '/storage/samba/automation')
-        days_outdated = reports_config.get('days_outdated', 10)
+        days_outdated = reports_config.get('days_outdated', 31)
         days_outdated = int(str(days_outdated))
         burp_www_reports = reports_config.get('burp_www_reports', '/var/www/html')
         json_clients_status = reports_config.get('json_clients_file', '/var/spool/burp/clients_status.json')
@@ -493,7 +512,7 @@ def reports_config_global(burp_custom=None, example=None):
     else:
         # if not burp custom file SET DEFAULT VALUES:
         burp_automation_folder = os.path.join(os.sep, 'storage', 'samba', 'automation')
-        days_outdated = 10
+        days_outdated = 31
         burp_www_reports = os.path.join(os.sep, 'var', 'www', 'html')
         json_clients_status = os.path.join(os.sep, 'var', 'spool', 'burp', 'clients_status.json')
         csv_file_data = os.path.join(burp_automation_folder, 'inventory.csv')
