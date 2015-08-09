@@ -202,9 +202,9 @@ tasksel	tasksel/first	multiselect ubuntu-desktop
 #############################################################################################
 
 # Controls whether to use NTP to set the clock during the install
-d-i clock-setup/ntp boolean true
+# d-i clock-setup/ntp boolean true
 # NTP server to use. The default is almost always fine here.
-d-i clock-setup/ntp-server string ntp.ubuntu.com
+# d-i clock-setup/ntp-server string ntp.ubuntu.com
 
 
 #############################################################################################
