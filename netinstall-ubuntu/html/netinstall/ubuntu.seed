@@ -1,0 +1,254 @@
+#More help: https://gist.github.com/moonwitch/11100762
+#http://askubuntu.com/questions/54809/how-can-i-remove-packages-using-preseed
+#https://help.ubuntu.com/10.04/installation-guide/example-preseed.txt
+
+# ¿Desea continuar sin instalar GRUB?
+grub-pc grub-pc/install_devices_empty   boolean false
+
+
+# You may set this to any valid setting for $TZ; see the contents of
+# /usr/share/zoneinfo/ for valid values.
+d-i time/zone string America/Montevideo
+
+# Preseeding only locale sets language, country and locale.
+#d-i debian-installer/locale string es_UY
+
+#en_USís de origen del teclado:
+# Choices: Afgano, Albanés, Alemán, Alemán (Austria), Amharico, Árabbe (Marruecos), Árabe, Árabe (Siria), Armenio, Azerbaijaní, Bambara, Bangla, Belga, Bielorruso, Bosnio, Braille, Búlgaro, Burmese, Checo, Chino, Cingalés (fonético), Coreano, Croata, Danés, Dhivehi, Dzongkha, Eslovaco, Esloveno, Español, Español (latinoamericano), Esperanto, Estonio, Faroés, Filipino, Finlandés, Francés, Francés (Canadá), Francés (Guinea), Francés (República Democrática del Congo), Georgiano, Griego, Hebreo, Holandés, Húngaro, Indio, Inglés (Camerún), Inglés (EE. UU.), Inglés (Ghana), Inglés (Nigeria), Inglés (RU), Inglés (Sudáfrica), Iraquí, Irlandés, Islandés, Italiano, Japones, Japonés (series PC-98xx), Kazajo, Khmer (Camboya), Kirguí, Lao, Letón, Lituano, Macedonio, Maltés, Maorí, Moldavian, Mongol, Montenegrino, Nepalí, Noruego, Persa, Polaco, Portugués, Portugués (Brasil), Rumano, Ruso, Serbio, Sueco, Swahili (Kenia), Swahili (Tanzania), Switzerland, Tailandés, Taiwanés, Tajico, Tswana, Turco, Turkmenistano, Ucraniano, Urdu (Pakistán), Uzbeco, Vietnamita, Wolof
+#keyboard-configuration  keyboard-configuration/layout   select  Español (latinoamericano)
+# ¿Desea que los directorios personales de los usuarios sean legibles?
+adduser adduser/homedir-permission      boolean true
+# ¿Desea agregar al usuario saned al grupo scanner?
+sane-utils      sane-utils/saned_scanner_group  boolean true
+
+# netcfg will choose an interface that has link if possible. This makes it
+# skip displaying a list if there is more than one interface.
+d-i netcfg/choose_interface select auto
+
+
+# Any hostname and domain names assigned from dhcp take precedence over
+# values set here. However, setting the values still prevents the questions
+# from being shown, even if values come from dhcp.
+#d-i netcfg/get_hostname string unassigned-hostname
+#d-i netcfg/get_domain string unassigned-domain
+
+#############################################################################################
+#                                       Partitioning 					    #
+#############################################################################################
+# If the system has free space you can choose to only partition that space.
+# Alternatives: custom, some_device, some_device_crypto, some_device_lvm.
+#d-i partman-auto/init_automatically_partition select biggest_free
+
+
+# This makes partman automatically partition without confirmation, provided
+# that you told it what to do using one of the methods above.
+#d-i partman/confirm_write_new_label boolean true
+#d-i partman/choose_partition select finish
+#d-i partman/confirm boolean true
+#d-i partman/confirm_nooverwrite boolean true
+
+# You can choose one of the three predefined partitioning recipes:
+# - atomic: all files in one partition
+# - home:   separate /home partition
+# - multi:  separate /home, /usr, /var, and /tmp partitions
+# d-i partman-auto/choose_recipe select home
+
+# http://anonscm.debian.org/gitweb/?p=d-i/debian-installer.git;a=blob_plain;f=doc/devel/partman-auto-recipe.txt;h=7313ddacbfb107fe0694a41ae7002f3ecde79d80;hb=HEAD
+# http://www.bishnet.net/tim/blog/2015/01/29/understanding-partman-autoexpert_recipe/
+# It will use some swapp between 2048 Mb and 8192 Mb (the biggest possible)
+# Then root / with 16 Gb
+# /var between 8Gb and 16Gb
+# /home with all free
+d-i partman-auto/expert_recipe string \
+        root-var-home :: \
+                2048 4096 8192 linux-swap \
+                        $primary{ } \
+                        method{ swap } format{ } \
+                . \
+                16384 16386 -1 ext4 \
+                        $primary{ } $bootable{ } \
+                        method{ format } format{ } \
+                        use_filesystem{ } filesystem{ ext4 } \
+                        mountpoint{ / } \
+                . \
+                8192 8241 16384 ext4 \
+                        method{ format } format{ } \
+                        use_filesystem{ } filesystem{ ext4 } \
+                        mountpoint{ /var } \
+                . \
+                100 10000 1000000000 ext4 \
+                        method{ format } format { } \
+                        use_filesystem{ } filesystem{ ext4 } \
+                        mountpoint{ /home } \
+                .
+#-------------------------------------------------------------------------------------------------------------------
+
+
+# Language pack selection
+d-i pkgsel/language-packs multiselect en, es
+
+# Policy for applying updates. May be "none" (no automatic updates),
+# "unattended-upgrades" (install security updates automatically), or
+# "landscape" (manage system with Landscape).
+d-i pkgsel/update-policy select unattended-upgrades
+
+# Some versions of the installer can report back on what software you have
+# installed, and what software you use. The default is not to report back,
+# but sending reports helps the project determine what software is most
+# popular and include it on CDs.
+popularity-contest popularity-contest/participate boolean false
+
+
+# To create a normal user account.
+d-i passwd/user-fullname string administradornet
+d-i passwd/username string administradornet
+
+# Normal user's password, either in clear text
+di- passwd/user-password password password2015
+di- passwd/user-password-again password password2015
+
+#d-i passwd/user-password-crypted password passwordxxxxx 
+d-i user-setup/allow-password-weak boolean false
+user-setup-udeb user-setup/encrypt-home boolean false
+
+
+### Boot loader installation ###
+
+# This is fairly safe to set, it makes grub install automatically to the MBR
+# if no other operating system is detected on the machine.
+d-i grub-installer/only_debian boolean true
+
+# This one makes grub-installer install to the MBR if it also finds some other
+# OS, which is less safe as it might not be able to boot that other OS.
+d-i grub-installer/with_other_os boolean true
+
+### Finishing up the first stage install ###
+
+# Avoid that last message about the install being complete.
+d-i finish-install/reboot_in_progress note
+
+# Enable shadow passwords.
+user-setup-udeb passwd/shadow boolean true
+
+### Clock and time zone setup
+# Controls whether or not the hardware clock is set to UTC.
+d-i clock-setup/utc boolean true
+
+
+
+### X configuration
+# X can detect the right driver for some cards, but if you're preseeding,
+# you override whatever it chooses. Still, vesa will work most places.
+#xserver-xorg xserver-xorg/config/device/driver select vesa
+
+
+#############################################################################################
+#                                       APT SETUP					    #
+#############################################################################################
+# Other info: 
+# http://ubuntuforums.org/showthread.php?t=2167373
+# You can choose to install restricted and universe software, or to install
+# software from the backports repository.
+
+
+
+### Mirror settings
+# If you select ftp, the mirror/country string does not need to be set.
+#d-i mirror/protocol string ftp
+d-i mirror/protocol string http
+d-i mirror/country string manual
+d-i mirror/http/mirror select 192.168.3.10
+d-i mirror/http/hostname string 192.168.3.10
+d-i mirror/http/directory string /ubuntu/
+#d-i mirror/http/proxy string
+# Suite to install.
+d-i mirror/suite string trusty
+
+d-i apt-setup/restricted boolean true
+d-i apt-setup/universe boolean true
+d-i apt-setup/backports boolean false
+# Uncomment this if you don't want to use a network mirror.
+#d-i apt-setup/use_mirror boolean false
+# Select which update services to use; define the mirrors to be used.
+# Values shown below are the normal defaults.
+d-i apt-setup/services-select multiselect security
+d-i apt-setup/security_host string 192.168.3.10
+d-i apt-setup/security_path string /ubuntu
+
+# Additional repositories, local[0-9] available
+# d-i apt-setup/local0/repository string \
+#       http://192.168.3.10/ubuntu main restricted universe multiverse
+#d-i apt-setup/local0/comment string local server
+# Enable deb-src lines
+#d-i apt-setup/local0/source boolean true
+# URL to the public key of the local repository; you must provide a key or
+# apt will complain about the unauthenticated repository and so the
+# sources.list line will be left commented out
+#d-i apt-setup/local0/key string http://local.server/key
+
+
+# Disable extras.ubuntu.com.
+d-i apt-setup/extras	boolean false
+
+#############################################################################################
+#                                       Desktop Selection                                   #
+#############################################################################################
+tasksel	tasksel/first	multiselect ubuntu-desktop
+# No XFCE translation packages yet.
+#d-i	pkgsel/language-pack-patterns	string
+
+#############################################################################################
+#                                       POST PRESEED                                        #
+#############################################################################################
+# http://blog.adrenlinerush.net/?p=234
+#d-i preseed/late_command string \
+#    in-target wget http://debian.orionschools.us/ohs-postpreseed.sh; \
+#    in-target /bin/bash -x chmod 755 ./ohs-postpreseed.sh; \
+#    in-target /bin/bash -x ./ohs-postpreseed.sh;
+
+
+#d-i pkgsel/upgrade select none
+
+d-i pkgsel/install-language-support boolean true
+
+
+
+#d-i preseed/late_command string apt-install ssh scribus libreoffice libreoffice-gtk3 libreoffice-l10n-es
+#d-i pkgsel/include string scribus
+#d-i preseed/early_command string apt-install ssh libreoffice libreoffice-gtk3 libreoffice-l10n-es
+d-i preseed/late_command string \
+in-target apt-get install -y --force-yes openssh-server scribus libreoffice ; \
+in-target apt-get install -y --force-yes libreoffice-l10n-es zram-config; \
+in-target wget http://192.168.3.10/netinstall/instalar_soft_xubuntu14.04.sh -O /tmp/instalar_soft_xubuntu14.04.sh; \
+in-target chmod 755 /tmp/instalar_soft_xubuntu14.04.sh; \
+in-target /tmp/instalar_soft_xubuntu14.04.sh autoinstall; \
+
+
+#Activate oem install configuration. 
+in-target apt-get install -y --force-yes oem-config ; \
+in-target /bin/bash -x oem-config-prepare --quiet ; 
+#true
+# in-target oem-config-prepare --quiet; \
+
+
+### X configuration
+# X can detect the right driver for some cards, but if you're preseeding,
+# you override whatever it chooses. Still, vesa will work most places.
+#xserver-xorg xserver-xorg/config/device/driver select vesa
+
+# A caveat with mouse autodetection is that if it fails, X will retry it
+# over and over. So if it's preseeded to be done, there is a possibility of
+# an infinite loop if the mouse is not autodetected.
+#xserver-xorg xserver-xorg/autodetect_mouse boolean true
+
+# Monitor autodetection is recommended.
+#xserver-xorg xserver-xorg/autodetect_monitor boolean true
+# Uncomment if you have an LCD display.
+#xserver-xorg xserver-xorg/config/monitor/lcd boolean true
+# X has three configuration paths for the monitor. Here's how to preseed
+# the "medium" path, which is always available. The "simple" path may not
+# be available, and the "advanced" path asks too many questions.
+#xserver-xorg xserver-xorg/config/monitor/selection-method \
+#       select medium
+#xserver-xorg xserver-xorg/config/monitor/mode-list \
+#       select 1024x768 @ 60 Hz
