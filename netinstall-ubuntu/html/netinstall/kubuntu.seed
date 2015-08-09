@@ -32,7 +32,9 @@ d-i netcfg/choose_interface select auto
 #d-i netcfg/get_hostname string unassigned-hostname
 #d-i netcfg/get_domain string unassigned-domain
 
-### Partitioning
+#############################################################################################
+#                                       Partitioning 					    #
+#############################################################################################
 # If the system has free space you can choose to only partition that space.
 # Alternatives: custom, some_device, some_device_crypto, some_device_lvm.
 #d-i partman-auto/init_automatically_partition select biggest_free
@@ -53,9 +55,13 @@ d-i netcfg/choose_interface select auto
 
 # http://anonscm.debian.org/gitweb/?p=d-i/debian-installer.git;a=blob_plain;f=doc/devel/partman-auto-recipe.txt;h=7313ddacbfb107fe0694a41ae7002f3ecde79d80;hb=HEAD
 # http://www.bishnet.net/tim/blog/2015/01/29/understanding-partman-autoexpert_recipe/
+# It will use some swapp between 2048 Mb and 8192 Mb (the biggest possible)
+# Then root / with 16 Gb
+# /var between 8Gb and 16Gb
+# /home with all free
 d-i partman-auto/expert_recipe string \
         root :: \
-                8192 8241 16384 linux-swap \
+                2048 4096 8192 linux-swap \
                         $primary{ } \
                         method{ swap } format{ } \
                 . \
@@ -70,7 +76,7 @@ d-i partman-auto/expert_recipe string \
                         method{ format } format{ } \
                         use_filesystem{ } filesystem{ ext4 } \
                         mountpoint{ /var } \
-                .
+                . \
                 100 10000 1000000000 ext4 \
                         method{ format } \
                         format{ } \
@@ -78,7 +84,7 @@ d-i partman-auto/expert_recipe string \
                         filesystem{ ext4 } \
                         mountpoint{ /home } \
                 .
-
+#-------------------------------------------------------------------------------------------------------------------
 
 
 # Language pack selection
@@ -94,9 +100,6 @@ d-i pkgsel/update-policy select unattended-upgrades
 # but sending reports helps the project determine what software is most
 # popular and include it on CDs.
 popularity-contest popularity-contest/participate boolean false
-
-
-
 
 
 # To create a normal user account.
@@ -187,9 +190,15 @@ d-i apt-setup/security_path string /ubuntu
 #d-i apt-setup/local0/key string http://local.server/key
 
 
-# Enable extras.ubuntu.com.
+# Disable extras.ubuntu.com.
 d-i apt-setup/extras	boolean false
 
+#############################################################################################
+#                                       Desktop Selection                                   #
+#############################################################################################
+tasksel	tasksel/first	multiselect kubuntu-desktop
+# No XFCE translation packages yet.
+#d-i	pkgsel/language-pack-patterns	string
 
 #############################################################################################
 #                                       POST PRESEED                                        #
@@ -205,10 +214,6 @@ d-i apt-setup/extras	boolean false
 
 d-i pkgsel/install-language-support boolean true
 
-# Install the Xubuntu desktop.
-tasksel	tasksel/first	multiselect kubuntu-desktop
-# No XFCE translation packages yet.
-#d-i	pkgsel/language-pack-patterns	string
 
 
 #d-i preseed/late_command string apt-install ssh scribus libreoffice libreoffice-gtk3 libreoffice-l10n-es
