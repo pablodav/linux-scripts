@@ -35,7 +35,7 @@ d-i netcfg/choose_interface select auto
 ### Partitioning
 # If the system has free space you can choose to only partition that space.
 # Alternatives: custom, some_device, some_device_crypto, some_device_lvm.
-d-i partman-auto/init_automatically_partition select biggest_free
+#d-i partman-auto/init_automatically_partition select biggest_free
 
 
 # This makes partman automatically partition without confirmation, provided
@@ -49,7 +49,35 @@ d-i partman-auto/init_automatically_partition select biggest_free
 # - atomic: all files in one partition
 # - home:   separate /home partition
 # - multi:  separate /home, /usr, /var, and /tmp partitions
-d-i partman-auto/choose_recipe select home
+# d-i partman-auto/choose_recipe select home
+
+# http://anonscm.debian.org/gitweb/?p=d-i/debian-installer.git;a=blob_plain;f=doc/devel/partman-auto-recipe.txt;h=7313ddacbfb107fe0694a41ae7002f3ecde79d80;hb=HEAD
+# http://www.bishnet.net/tim/blog/2015/01/29/understanding-partman-autoexpert_recipe/
+d-i partman-auto/expert_recipe string \
+        root :: \
+                8192 8241 16384 linux-swap \
+                        $primary{ } \
+                        method{ swap } format{ } \
+                . \
+                16384 16386 -1 ext4 \
+                        $primary{ } $bootable{ } \
+                        method{ format } format{ } \
+                        use_filesystem{ } filesystem{ ext4 } \
+                        mountpoint{ / } \
+                . \
+                8192 8241 16384 ext4 \
+                        $primary{ } \
+                        method{ format } format{ } \
+                        use_filesystem{ } filesystem{ ext4 } \
+                        mountpoint{ /var } \
+                .
+                100 10000 1000000000 ext4 \
+                        method{ format } \
+                        format{ } \
+                        use_filesystem{ } \
+                        filesystem{ ext4 } \
+                        mountpoint{ /home } \
+                .
 
 
 
