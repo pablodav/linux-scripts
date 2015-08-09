@@ -37,14 +37,14 @@ d-i netcfg/choose_interface select auto
 #############################################################################################
 # If the system has free space you can choose to only partition that space.
 # Alternatives: custom, some_device, some_device_crypto, some_device_lvm.
-#d-i partman-auto/init_automatically_partition select biggest_free
+d-i partman-auto/init_automatically_partition select biggest_free
 
 
 # This makes partman automatically partition without confirmation, provided
 # that you told it what to do using one of the methods above.
-#d-i partman/confirm_write_new_label boolean true
-#d-i partman/choose_partition select finish
-#d-i partman/confirm boolean true
+d-i partman/confirm_write_new_label boolean true
+d-i partman/choose_partition select finish
+d-i partman/confirm boolean true
 #d-i partman/confirm_nooverwrite boolean true
 
 # You can choose one of the three predefined partitioning recipes:
