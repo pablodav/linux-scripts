@@ -198,6 +198,16 @@ tasksel	tasksel/first	multiselect ubuntu-desktop
 #d-i	pkgsel/language-pack-patterns	string
 
 #############################################################################################
+#                                       NTP Selection                                   #
+#############################################################################################
+
+# Controls whether to use NTP to set the clock during the install
+d-i clock-setup/ntp boolean true
+# NTP server to use. The default is almost always fine here.
+d-i clock-setup/ntp-server string ntp.ubuntu.com
+
+
+#############################################################################################
 #                                       POST PRESEED                                        #
 #############################################################################################
 # http://blog.adrenlinerush.net/?p=234
