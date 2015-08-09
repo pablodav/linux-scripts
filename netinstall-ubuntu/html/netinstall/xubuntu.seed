@@ -5,6 +5,11 @@
 # ¿Desea continuar sin instalar GRUB?
 grub-pc grub-pc/install_devices_empty   boolean false
 
+
+# You may set this to any valid setting for $TZ; see the contents of
+# /usr/share/zoneinfo/ for valid values.
+d-i time/zone string America/Montevideo
+
 # Preseeding only locale sets language, country and locale.
 #d-i debian-installer/locale string es_UY
 
@@ -27,10 +32,12 @@ d-i netcfg/choose_interface select auto
 #d-i netcfg/get_hostname string unassigned-hostname
 #d-i netcfg/get_domain string unassigned-domain
 
-### Partitioning
+#############################################################################################
+#                                       Partitioning 					    #
+#############################################################################################
 # If the system has free space you can choose to only partition that space.
 # Alternatives: custom, some_device, some_device_crypto, some_device_lvm.
-d-i partman-auto/init_automatically_partition select biggest_free
+#d-i partman-auto/init_automatically_partition select biggest_free
 
 
 # This makes partman automatically partition without confirmation, provided
@@ -44,8 +51,37 @@ d-i partman-auto/init_automatically_partition select biggest_free
 # - atomic: all files in one partition
 # - home:   separate /home partition
 # - multi:  separate /home, /usr, /var, and /tmp partitions
-d-i partman-auto/choose_recipe select home
+# d-i partman-auto/choose_recipe select home
 
+# http://anonscm.debian.org/gitweb/?p=d-i/debian-installer.git;a=blob_plain;f=doc/devel/partman-auto-recipe.txt;h=7313ddacbfb107fe0694a41ae7002f3ecde79d80;hb=HEAD
+# http://www.bishnet.net/tim/blog/2015/01/29/understanding-partman-autoexpert_recipe/
+# It will use some swapp between 2048 Mb and 8192 Mb (the biggest possible)
+# Then root / with 16 Gb
+# /var between 8Gb and 16Gb
+# /home with all free
+d-i partman-auto/expert_recipe string \
+        root-var-home :: \
+                2048 4096 8192 linux-swap \
+                        $primary{ } \
+                        method{ swap } format{ } \
+                . \
+                16384 16386 -1 ext4 \
+                        $primary{ } $bootable{ } \
+                        method{ format } format{ } \
+                        use_filesystem{ } filesystem{ ext4 } \
+                        mountpoint{ / } \
+                . \
+                8192 8241 16384 ext4 \
+                        method{ format } format{ } \
+                        use_filesystem{ } filesystem{ ext4 } \
+                        mountpoint{ /var } \
+                . \
+                100 10000 1000000000 ext4 \
+                        method{ format } format { } \
+                        use_filesystem{ } filesystem{ ext4 } \
+                        mountpoint{ /home } \
+                .
+#-------------------------------------------------------------------------------------------------------------------
 
 
 # Language pack selection
@@ -63,6 +99,47 @@ d-i pkgsel/update-policy select unattended-upgrades
 popularity-contest popularity-contest/participate boolean false
 
 
+# To create a normal user account.
+d-i passwd/user-fullname string administradornet
+d-i passwd/username string administradornet
+
+# Normal user's password, either in clear text
+di- passwd/user-password password password2015
+di- passwd/user-password-again password password2015
+
+#d-i passwd/user-password-crypted password passwordxxxxx 
+d-i user-setup/allow-password-weak boolean false
+user-setup-udeb user-setup/encrypt-home boolean false
+
+
+### Boot loader installation ###
+
+# This is fairly safe to set, it makes grub install automatically to the MBR
+# if no other operating system is detected on the machine.
+d-i grub-installer/only_debian boolean true
+
+# This one makes grub-installer install to the MBR if it also finds some other
+# OS, which is less safe as it might not be able to boot that other OS.
+d-i grub-installer/with_other_os boolean true
+
+### Finishing up the first stage install ###
+
+# Avoid that last message about the install being complete.
+d-i finish-install/reboot_in_progress note
+
+# Enable shadow passwords.
+user-setup-udeb passwd/shadow boolean true
+
+### Clock and time zone setup
+# Controls whether or not the hardware clock is set to UTC.
+d-i clock-setup/utc boolean true
+
+
+
+### X configuration
+# X can detect the right driver for some cards, but if you're preseeding,
+# you override whatever it chooses. Still, vesa will work most places.
+#xserver-xorg xserver-xorg/config/device/driver select vesa
 
 
 #############################################################################################
@@ -110,62 +187,15 @@ d-i apt-setup/security_path string /ubuntu
 #d-i apt-setup/local0/key string http://local.server/key
 
 
-# Enable extras.ubuntu.com.
+# Disable extras.ubuntu.com.
 d-i apt-setup/extras	boolean false
 
-
-# To create a normal user account.
-d-i passwd/user-fullname string administradornet
-d-i passwd/username string administradornet
-
-# Normal user's password, either in clear text
-di- passwd/user-password password password2015
-di- passwd/user-password-again password password2015
-
-#d-i passwd/user-password-crypted password passwordxxxxx 
-d-i user-setup/allow-password-weak boolean false
-user-setup-udeb user-setup/encrypt-home boolean false
-
-
-### Boot loader installation ###
-
-# This is fairly safe to set, it makes grub install automatically to the MBR
-# if no other operating system is detected on the machine.
-d-i grub-installer/only_debian boolean true
-
-# This one makes grub-installer install to the MBR if it also finds some other
-# OS, which is less safe as it might not be able to boot that other OS.
-d-i grub-installer/with_other_os boolean true
-
-### Finishing up the first stage install ###
-
-# Avoid that last message about the install being complete.
-d-i finish-install/reboot_in_progress note
-
-# Enable shadow passwords.
-user-setup-udeb passwd/shadow boolean true
-
-### Clock and time zone setup
-# Controls whether or not the hardware clock is set to UTC.
-d-i clock-setup/utc boolean true
-
-# You may set this to any valid setting for $TZ; see the contents of
-# /usr/share/zoneinfo/ for valid values.
-d-i time/zone string America/Montevideo
-
-
-### X configuration
-# X can detect the right driver for some cards, but if you're preseeding,
-# you override whatever it chooses. Still, vesa will work most places.
-#xserver-xorg xserver-xorg/config/device/driver select vesa
-
-
-
-
-
-# Enable extras.ubuntu.com.
-d-i apt-setup/extras	boolean true
-
+#############################################################################################
+#                                       Desktop Selection                                   #
+#############################################################################################
+tasksel	tasksel/first	multiselect xubuntu-desktop
+# No XFCE translation packages yet.
+#d-i	pkgsel/language-pack-patterns	string
 
 #############################################################################################
 #                                       POST PRESEED                                        #
@@ -181,10 +211,6 @@ d-i apt-setup/extras	boolean true
 
 d-i pkgsel/install-language-support boolean true
 
-# Install the Xubuntu desktop.
-tasksel	tasksel/first	multiselect xubuntu-desktop
-# No XFCE translation packages yet.
-#d-i	pkgsel/language-pack-patterns	string
 
 
 #d-i preseed/late_command string apt-install ssh scribus libreoffice libreoffice-gtk3 libreoffice-l10n-es

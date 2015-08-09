@@ -63,11 +63,11 @@ echo -e "Por favor configurar $dhcpconfigfile con su rango e ip de servidor loca
 install_requirements
 
 ## Clonar el repo princial, Temporalmente es este: 
-git clone https://github.com/pablodav/linux-scripts.git
+# git clone https://github.com/pablodav/linux-scripts.git
 ## Moverse al directorio con los archivos del instalador
-cd linux-scripts/netinstall-ubuntu/
-git reset --hard
-git pull
+# cd linux-scripts/netinstall-ubuntu/
+# git reset --hard
+# git pull
 
 # Configurar dhcp3
 # ------------
