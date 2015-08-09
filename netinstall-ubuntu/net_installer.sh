@@ -89,7 +89,7 @@ sudo chmod o+rx -R $tftpdir
 ### Copy tftp configuration
 #Para hacer las cosas más fáciles voy a precisar reemplazar la dirección ip del servidor en el futuro de forma automática,
 #En este ejemplo se usará siempre 192.168.3.10 como ip de servidor tftp, nfs, dhcp, http con mirror. 
-sudo rsync -rh --force --chown=root:nogroup var/lib/tftpboot/ubuntu-installer/i386/ $tftpdir/ubuntu-installer/i386/
+sudo rsync -ru --force --chown=root:nogroup var/lib/tftpboot/ubuntu-installer/i386/ $tftpdir/ubuntu-installer/i386/
 
 
 # Configurar debmirror
@@ -105,7 +105,7 @@ sudo cp -f etc/cron.d/mirrorbuild /etc/cron.d/mirrorbuild
 backupfile $nginxcfg
 sudo cp -f etc/nginx/sites-enabled/default $nginxcfg
 ### Copiar archivos en html 
-sudo rsync -rh --force --chown=root:nogroup html/netinstall /usr/share/nginx/html/
+sudo rsync -ru --force --chown=root:nogroup html/netinstall /usr/share/nginx/html/
 sudo mkdir /home/UbuntuMirror
 sudo ln -s /home/UbuntuMirror/ /usr/share/nginx/html/ubuntu 
 #Restart nginx
