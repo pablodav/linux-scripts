@@ -40,11 +40,18 @@ install_requirements(){
 }
 
 backupfile(){
-    file=${!1}
-    echo -e "backup file $file in /tmp"
+    file=$1
+    fileback=$file.bak
+    echo -e "backup file $file "
     #changed to backup on /tmp dir because we found problems with duplicated config for ngix if we backup on same folder
     #as sites enabled
-    sudo cp $file /tmp/$file.bak
+    # http://www.tldp.org/LDP/abs/html/fto.html
+    if [[ -f $file ]] ; then 
+        sudo cp $file $fileback
+    fi 
+    if [[ $fileback -nt $file ]] ; then
+        echo "$file is backed up successfully to $fileback"
+    fi
 }
     
 last_message(){
@@ -63,7 +70,7 @@ cd linux-scripts/netinstall-ubuntu/
 # Configurar dhcp3
 # ------------
 #### Backup - Copy dhcpd.conf
-backupfile dhcpconfigfile
+backupfile $dhcpconfigfile
 sudo cp -f etc/dhcp3/dhcpd.conf /etc/dhcp/dhcpd.conf
 sudo service isc-dhcp-server restart
 
@@ -95,7 +102,7 @@ sudo cp -f etc/cron.d/mirrorbuild /etc/cron.d/mirrorbuild
 # Configurar servidor web
 # ----------
 ### Copiar archivo etc
-backupfile nginxcfg
+backupfile $nginxcfg
 sudo cp -f etc/nginx/sites-enabled/default $nginxcfg
 ### Copiar archivos en html 
 sudo rsync -rh --force --chown=root:nogroup html/netinstall /usr/share/nginx/html/
