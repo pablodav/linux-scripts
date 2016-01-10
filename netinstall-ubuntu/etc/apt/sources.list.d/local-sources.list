@@ -2,18 +2,18 @@
 
 # See http://help.ubuntu.com/community/UpgradeNotes for how to upgrade to
 # newer versions of the distribution.
-deb http://192.168.1.100/ubuntu/ trusty main
-deb http://192.168.1.100/ubuntu/ trusty restricted multiverse
+deb http://192.168.3.10/ubuntu/ trusty main
+deb http://192.168.3.10/ubuntu/ trusty restricted multiverse
 
 ## Major bug fix updates produced after the final release of the
 ## distribution.
-deb http://192.168.1.100/ubuntu/ trusty-updates main
+deb http://192.168.3.10/ubuntu/ trusty-updates main
 
 ## N.B. software from this repository is ENTIRELY UNSUPPORTED by the Ubuntu
 ## team. Also, please note that software in universe WILL NOT receive any
 ## review or updates from the Ubuntu security team.
-deb http://192.168.1.100/ubuntu/ trusty universe
-deb http://192.168.1.100/ubuntu/ trusty-updates universe
+deb http://192.168.3.10/ubuntu/ trusty universe
+deb http://192.168.3.10/ubuntu/ trusty-updates universe
 
 ## N.B. software from this repository may not have been tested as
 ## extensively as that contained in the main release, although it includes
@@ -21,10 +21,10 @@ deb http://192.168.1.100/ubuntu/ trusty-updates universe
 ## Also, please note that software in backports WILL NOT receive any review
 ## or updates from the Ubuntu security team.
 
-deb http://192.168.1.100/ubuntu trusty-security main
-deb http://192.168.1.100/ubuntu trusty-security universe
-# deb http://192.168.1.100/ubuntu trusty-security multiverse
-# deb-src http://192.168.1.100/ubuntu trusty-security multiverse
+deb http://192.168.3.10/ubuntu trusty-security main
+deb http://192.168.3.10/ubuntu trusty-security universe
+# deb http://192.168.3.10/ubuntu trusty-security multiverse
+# deb-src http://192.168.3.10/ubuntu trusty-security multiverse
 
 ## Uncomment the following two lines to add software from Ubuntu's
 ## 'extras' repository.
