@@ -41,7 +41,7 @@ install_requirements(){
 
 backupfile(){
     file=$1
-    fileback=$file.bak
+    fileback=/root/$file.bak
     echo -e "backup file $file "
     #changed to backup on /tmp dir because we found problems with duplicated config for ngix if we backup on same folder
     #as sites enabled
