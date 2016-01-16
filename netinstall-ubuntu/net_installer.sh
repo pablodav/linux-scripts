@@ -101,6 +101,10 @@ sudo cp -f debmirror/usr/local/bin/mirrorbuild.sh /usr/local/bin/
 ### Programar cron
 sudo cp -f etc/cron.d/mirrorbuild /etc/cron.d/mirrorbuild
 
+# Importar claves gpg:
+sudo mkdir /home/mirrorkeyring
+gpg --no-default-keyring --keyring /home/mirrorkeyring/trustedkeys.gpg --import /usr/share/keyrings/ubuntu-archive-keyring.gpg
+
 # Configurar servidor web
 # ----------
 ### Copiar archivo etc
