@@ -4,6 +4,7 @@
 #https://wiki.debian.org/DebianInstaller/Preseed
 #https://www.debian.org/releases/stable/i386/ch04s06.html.en
 #http://www.debian.org/releases/stable/i386/apb.html
+# This script will be abandonen in favor of projects like: http://fai-project.org/fai-guide/#_a_id_features_a_features
 #
 #Used doc: https://help.ubuntu.com/community/Installation/LocalNet
 #https://help.ubuntu.com/stable/installation-guide/en.i386/ch04s05.html
