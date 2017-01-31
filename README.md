@@ -1,3 +1,4 @@
+[![Stories in Ready](https://badge.waffle.io/pablodav/linux-scripts.png?label=ready&title=Ready)](https://waffle.io/pablodav/linux-scripts)
 linux-scripts 
 =============
 
